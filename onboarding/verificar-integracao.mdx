@@ -1,0 +1,195 @@
+---
+title: "Verificar Integração"
+description: "Confirme que o tracker está instalado corretamente e que os dados estão chegando à plataforma."
+icon: "circle-check"
+---
+
+## Checklist de verificação
+
+Use este checklist para garantir que tudo está funcionando:
+
+<Steps>
+  <Step title="Verificar no navegador">
+    Abra seu site em uma nova aba e abra o **Console do navegador** (`F12` → aba **Console**).
+
+    Digite o seguinte comando:
+
+    ```javascript
+    __SmartTrack
+    ```
+
+    Se o tracker está carregado corretamente, você verá o objeto `__SmartTrack` com todos os métodos disponíveis.
+
+    <Check>
+      Se o objeto apareceu, o tracker está carregado.
+    </Check>
+
+    <Warning>
+      Se aparecer `undefined` ou um erro, o script não foi carregado. Verifique se:
+      - O `<script>` está na página
+      - A URL do script está correta
+      - A `api-key` foi preenchida
+      - Não há bloqueadores de anúncios interferindo
+    </Warning>
+  </Step>
+
+  <Step title="Verificar o ID do visitante">
+    No console, execute:
+
+    ```javascript
+    __SmartTrack.getLocalStorageId()
+    ```
+
+    Deve retornar uma string como `"a1b2c3d4-e5f6-..."`. Esse é o identificador persistente do visitante.
+  </Step>
+
+  <Step title="Verificar a sessão">
+    Execute:
+
+    ```javascript
+    __SmartTrack.getSessionId()
+    ```
+
+    Deve retornar o ID da sessão atual.
+  </Step>
+
+  <Step title="Verificar requisições de rede">
+    Ainda no DevTools, vá para a aba **Network** (Rede).
+
+    1. Filtre por `smarttrack` ou `tracker`.
+    2. Navegue pelo site normalmente.
+    3. Você deve ver requisições `POST` sendo enviadas à API da UserIn.
+
+    <Check>
+      Se as requisições retornam **status 200**, os dados estão sendo recebidos com sucesso.
+    </Check>
+  </Step>
+
+  <Step title="Verificar na plataforma">
+    Acesse [app.userin.ai](https://app.userin.ai) e vá para a seção **Audiência** ou **Analytics**.
+
+    Você deve ver:
+    - Seu visitante de teste (identificado pelo IP ou dados)
+    - Page views registrados
+    - Sessão ativa
+  </Step>
+</Steps>
+
+---
+
+## Teste a identificação de usuário
+
+No console do seu site, execute:
+
+```javascript
+__SmartTrack.setExternalUserContext('teste-123', {
+  email: 'teste@minhaempresa.com',
+  name: 'Visitante Teste'
+});
+```
+
+Depois, volte à plataforma e verifique se o visitante agora aparece com o nome **"Visitante Teste"** e o email associado.
+
+<Tip>
+  **Dica:** abra uma janela anônima/privada para simular um novo visitante sem dados em cache.
+</Tip>
+
+---
+
+## Teste eventos customizados
+
+Envie um evento de teste:
+
+```javascript
+__SmartTrack.customEvent('teste_integracao', {
+  source: 'documentacao',
+  timestamp: new Date().toISOString()
+});
+```
+
+Esse evento deve aparecer no histórico do visitante na plataforma.
+
+---
+
+## Problemas comuns
+
+<AccordionGroup>
+  <Accordion title="O objeto __SmartTrack não existe" icon="circle-xmark">
+    **Causa:** O script não foi carregado.
+
+    **Soluções:**
+    - Verifique se o `<script>` está presente no HTML da página
+    - Confira se a URL `https://smarttrack.userin.ai/tracker.js` está acessível
+    - Verifique se não há erros de rede na aba **Network** do DevTools
+    - Desative temporariamente extensões de ad-block
+  </Accordion>
+
+  <Accordion title="Requisições retornam erro 401/403" icon="lock">
+    **Causa:** API Key inválida ou expirada.
+
+    **Soluções:**
+    - Verifique se a `api-key` no script está correta
+    - Copie a API Key novamente da plataforma em **Configurações → Integração**
+    - Certifique-se de que não há espaços extras no atributo
+  </Accordion>
+
+  <Accordion title="Dados não aparecem na plataforma" icon="eye-slash">
+    **Causa:** Pode haver um delay ou filtro ativo.
+
+    **Soluções:**
+    - Aguarde 1-2 minutos — alguns dados são processados em batch
+    - Verifique o período selecionado no filtro de data
+    - Certifique-se de que está no projeto correto
+    - Verifique se a requisição `POST` no Network retorna status 200
+  </Accordion>
+
+  <Accordion title="Tracker não captura em SPA (React, Vue, etc.)" icon="rotate">
+    **Causa:** O tracker precisa detectar mudanças de rota.
+
+    **Solução:** O tracker da UserIn já detecta mudanças de rota automaticamente via `History API` (`pushState` / `popstate`). Se mesmo assim não funcionar:
+
+    ```javascript
+    // Dispare manualmente após navegação
+    __SmartTrack.customEvent('pageview', {
+      url: window.location.href,
+      title: document.title
+    });
+    ```
+  </Accordion>
+
+  <Accordion title="Ad-blockers estão bloqueando o tracker" icon="shield">
+    **Causa:** Extensões como uBlock Origin podem bloquear scripts de rastreamento.
+
+    **Soluções:**
+    - Configure um proxy reverso no seu domínio para servir o tracker
+    - Use um subdomínio próprio (ex: `t.meusite.com/tracker.js`)
+    - Entre em contato com o suporte para configurar um domínio customizado
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Tudo pronto?
+
+<Check>
+  **Parabéns!** Se todos os checks passaram, sua integração está completa. O tracker está capturando dados e enviando para a plataforma UserIn.
+</Check>
+
+## Próximos passos
+
+Agora que a integração está funcionando, explore o que você pode fazer:
+
+<CardGroup cols={2}>
+  <Card title="Criar Segmentos" icon="users" href="/guias/segmentos">
+    Agrupe visitantes por comportamento e crie audiências dinâmicas.
+  </Card>
+  <Card title="Smart Modals" icon="window-maximize" href="/guias/smart-modals">
+    Exiba modais personalizados baseados no comportamento do visitante.
+  </Card>
+  <Card title="Journey Builder" icon="route" href="/guias/jornadas">
+    Crie automações visuais para engajar seus visitantes.
+  </Card>
+  <Card title="Companion (IA)" icon="robot" href="/guias/companion">
+    Ative o assistente de IA para conversar com seus visitantes.
+  </Card>
+</CardGroup>

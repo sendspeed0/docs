@@ -1,0 +1,83 @@
+---
+title: "Primeiros Passos"
+description: "Crie sua conta, configure seu projeto e prepare tudo para começar a capturar dados do seu site."
+icon: "rocket"
+---
+
+## Bem-vindo à UserIn
+
+Em poucos minutos você terá a UserIn capturando dados comportamentais do seu site. Este guia vai te levar do zero ao primeiro dado recebido.
+
+<Info>
+  **Tempo estimado:** 5 minutos para concluir todo o setup inicial.
+</Info>
+
+## 1. Acesse a plataforma
+
+<Steps>
+  <Step title="Crie sua conta ou faça login">
+    Acesse [app.userin.ai](https://app.userin.ai) e crie sua conta. Se já tem uma conta, faça login normalmente.
+  </Step>
+  <Step title="Acesse o painel">
+    Após o login, você será direcionado ao painel principal da plataforma.
+  </Step>
+</Steps>
+
+## 2. Obtenha sua API Key
+
+A API Key é o identificador único do seu projeto. Ela é usada pelo tracker para enviar dados para a sua conta.
+
+<Steps>
+  <Step title="Acesse as Configurações">
+    No menu lateral, clique em **Configurações** (ícone de engrenagem).
+  </Step>
+  <Step title="Encontre sua API Key">
+    Na seção **Integração**, você encontrará sua **API Key**. Ela é um token JWT que contém o identificador do seu projeto.
+
+    <Warning>
+      **Mantenha sua API Key segura.** Embora ela seja uma chave pública (usada no frontend), não a compartilhe desnecessariamente.
+    </Warning>
+  </Step>
+  <Step title="Copie a API Key">
+    Clique no botão de copiar ao lado da API Key. Você vai precisar dela no próximo passo.
+
+    Ela se parece com algo assim:
+    ```
+    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb21wYW55SWQiOiI2O...
+    ```
+  </Step>
+</Steps>
+
+## 3. Entenda a estrutura
+
+Antes de instalar, entenda o que vai acontecer:
+
+<CardGroup cols={2}>
+  <Card title="O que o Tracker captura" icon="eye">
+    - Page views automáticos
+    - Cliques em elementos
+    - Envio de formulários
+    - Comportamento de scroll
+    - Tempo na página
+    - Origem do tráfego
+  </Card>
+  <Card title="O que você controla" icon="sliders">
+    - Identificação de usuários
+    - Eventos customizados
+    - Quais formulários capturar
+    - Ativação do Companion (IA)
+    - Componentes visuais (modais, etc.)
+  </Card>
+</CardGroup>
+
+## Próximo passo
+
+Agora que você tem sua API Key, é hora de instalar o tracker no seu site.
+
+<Card
+  title="Instalar o Tracker"
+  icon="arrow-right"
+  href="/onboarding/instalar-tracker"
+>
+  Adicione uma linha de código ao seu site e comece a capturar dados.
+</Card>

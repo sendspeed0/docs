@@ -1,0 +1,232 @@
+---
+title: "Instalar o Tracker"
+description: "Adicione o script de rastreamento da UserIn ao seu site em uma única linha de código."
+icon: "code"
+---
+
+## Instalação rápida
+
+Adicione o seguinte script ao `<head>` ou antes do fechamento do `</body>` em todas as páginas do seu site:
+
+```html
+<script
+  src="https://smarttrack.userin.ai/tracker.js"
+  api-key="SUA_API_KEY_AQUI"
+></script>
+```
+
+<Tip>
+  **Recomendamos** colocar o script no `<head>` para capturar dados desde o primeiro momento do carregamento da página.
+</Tip>
+
+Substitua `SUA_API_KEY_AQUI` pela API Key que você copiou nos [Primeiros Passos](/onboarding/primeiros-passos).
+
+---
+
+## Instalação por plataforma
+
+<AccordionGroup>
+  <Accordion title="HTML puro" icon="file-code">
+    Adicione diretamente no seu arquivo HTML:
+    ```html
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <title>Meu Site</title>
+
+      <!-- UserIn Tracker -->
+      <script
+        src="https://smarttrack.userin.ai/tracker.js"
+        api-key="SUA_API_KEY_AQUI"
+      ></script>
+    </head>
+    <body>
+      <!-- Seu conteúdo -->
+    </body>
+    </html>
+    ```
+  </Accordion>
+
+  <Accordion title="WordPress" icon="wordpress">
+    **Opção 1 — Via plugin (recomendado):**
+    1. Instale um plugin de inserção de scripts como **Insert Headers and Footers** ou **WPCode**.
+    2. Vá em **Configurações → Insert Headers and Footers**.
+    3. Cole o script no campo **Scripts in Header**:
+
+    ```html
+    <script
+      src="https://smarttrack.userin.ai/tracker.js"
+      api-key="SUA_API_KEY_AQUI"
+    ></script>
+    ```
+    4. Salve as alterações.
+
+    **Opção 2 — Via `functions.php`:**
+    ```php
+    function userin_tracker_script() {
+      echo '<script src="https://smarttrack.userin.ai/tracker.js" api-key="SUA_API_KEY_AQUI"></script>';
+    }
+    add_action('wp_head', 'userin_tracker_script');
+    ```
+  </Accordion>
+
+  <Accordion title="Next.js" icon="react">
+    No seu `app/layout.tsx` (App Router) ou `pages/_document.tsx` (Pages Router):
+
+    **App Router (`app/layout.tsx`):**
+    ```tsx
+    import Script from 'next/script'
+
+    export default function RootLayout({ children }) {
+      return (
+        <html>
+          <head>
+            <Script
+              src="https://smarttrack.userin.ai/tracker.js"
+              strategy="afterInteractive"
+              data-api-key="SUA_API_KEY_AQUI"
+            />
+          </head>
+          <body>{children}</body>
+        </html>
+      )
+    }
+    ```
+
+    **Pages Router (`pages/_document.tsx`):**
+    ```tsx
+    import { Html, Head, Main, NextScript } from 'next/document'
+
+    export default function Document() {
+      return (
+        <Html>
+          <Head>
+            <script
+              src="https://smarttrack.userin.ai/tracker.js"
+              api-key="SUA_API_KEY_AQUI"
+            />
+          </Head>
+          <body>
+            <Main />
+            <NextScript />
+          </body>
+        </Html>
+      )
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Shopify" icon="shopify">
+    1. No painel Shopify, vá em **Online Store → Themes**.
+    2. Clique em **Actions → Edit Code**.
+    3. Abra o arquivo `theme.liquid`.
+    4. Antes do fechamento `</head>`, adicione:
+
+    ```html
+    <!-- UserIn Tracker -->
+    <script
+      src="https://smarttrack.userin.ai/tracker.js"
+      api-key="SUA_API_KEY_AQUI"
+    ></script>
+    ```
+    5. Salve o arquivo.
+  </Accordion>
+
+  <Accordion title="React / Vite / SPA" icon="react">
+    No seu `index.html`:
+
+    ```html
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8" />
+      <title>Minha App</title>
+
+      <!-- UserIn Tracker -->
+      <script
+        src="https://smarttrack.userin.ai/tracker.js"
+        api-key="SUA_API_KEY_AQUI"
+      ></script>
+    </head>
+    <body>
+      <div id="root"></div>
+      <script type="module" src="/src/main.tsx"></script>
+    </body>
+    </html>
+    ```
+
+    <Info>
+      O tracker detecta automaticamente mudanças de rota em SPAs (Single Page Applications), capturando page views mesmo sem recarregamento de página.
+    </Info>
+  </Accordion>
+
+  <Accordion title="Google Tag Manager" icon="google">
+    1. No GTM, crie uma nova **Tag** do tipo **HTML Personalizado**.
+    2. Cole o seguinte código:
+
+    ```html
+    <script
+      src="https://smarttrack.userin.ai/tracker.js"
+      api-key="SUA_API_KEY_AQUI"
+    ></script>
+    ```
+    3. Configure o **Trigger** como **All Pages** (Todas as páginas).
+    4. Publique o container.
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Opções avançadas do script
+
+### Ativar o Companion (IA)
+
+Para habilitar o assistente de IA conversacional junto com o tracker:
+
+```html
+<script
+  src="https://smarttrack.userin.ai/tracker.js"
+  api-key="SUA_API_KEY_AQUI"
+  buyer-agent="true"
+></script>
+```
+
+O atributo `buyer-agent="true"` ativa o Companion, que aparecerá como um chat flutuante no seu site.
+
+---
+
+## O que acontece após a instalação
+
+Assim que o script carregar, o tracker automaticamente:
+
+<Steps>
+  <Step title="Gera um ID único para o visitante">
+    Cada visitante recebe um identificador persistente salvo no `localStorage` do navegador.
+  </Step>
+  <Step title="Inicia uma sessão">
+    Uma sessão é criada com dados de origem, URL, referrer e dispositivo.
+  </Step>
+  <Step title="Captura o primeiro page view">
+    O tracker registra a primeira página visitada com timestamp e metadados.
+  </Step>
+  <Step title="Começa a escutar interações">
+    Cliques, scrolls, formulários e mudanças de visibilidade passam a ser monitorados automaticamente.
+  </Step>
+</Steps>
+
+<Check>
+  **Nenhuma configuração adicional é necessária** para a captura básica de dados. O tracker funciona imediatamente após a instalação.
+</Check>
+
+## Próximo passo
+
+O tracker já está capturando dados anônimos. Agora, aprenda a conectar esses dados a usuários reais.
+
+<Card
+  title="Conectando Dados"
+  icon="arrow-right"
+  href="/onboarding/conectando-dados"
+>
+  Identifique visitantes, capture formulários e envie eventos customizados.
+</Card>

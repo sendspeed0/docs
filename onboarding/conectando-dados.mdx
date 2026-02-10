@@ -1,0 +1,287 @@
+---
+title: "Conectando Dados"
+description: "Identifique visitantes, capture formulários e envie eventos customizados para enriquecer os perfis na UserIn."
+icon: "plug"
+---
+
+## Por que conectar dados?
+
+O tracker captura dados comportamentais automaticamente, mas visitantes são **anônimos** por padrão. Ao conectar dados, você transforma visitantes anônimos em perfis completos com nome, email e contexto de negócio.
+
+<CardGroup cols={3}>
+  <Card title="Identificar" icon="user-check">
+    Conecte visitantes a perfis reais quando fizerem login ou se cadastrarem.
+  </Card>
+  <Card title="Capturar" icon="rectangle-list">
+    Colete dados de formulários automaticamente ou com controle total.
+  </Card>
+  <Card title="Rastrear" icon="bullseye">
+    Envie eventos customizados para ações específicas do seu negócio.
+  </Card>
+</CardGroup>
+
+---
+
+## 1. Identificar usuários
+
+Quando um visitante fizer login, se cadastrar ou preencher um formulário com dados de contato, identifique-o com:
+
+```javascript
+__SmartTrack.setExternalUserContext('id_do_usuario', {
+  email: 'maria@empresa.com',
+  name: 'Maria Silva',
+  plan: 'premium'
+});
+```
+
+### Parâmetros
+
+<ParamField body="userId" type="string" required>
+  Identificador único do usuário no **seu** sistema (ID do banco, UUID, etc.)
+</ParamField>
+
+<ParamField body="properties" type="object">
+  Objeto com propriedades do usuário. Campos comuns:
+
+  | Campo | Tipo | Descrição |
+  |-------|------|-----------|
+  | `email` | string | Email do usuário |
+  | `name` | string | Nome completo |
+  | `phone` | string | Telefone |
+  | `plan` | string | Plano/assinatura |
+  | `company` | string | Nome da empresa |
+  | `role` | string | Cargo ou função |
+
+  <Tip>Você pode enviar **qualquer propriedade customizada** — elas serão salvas no perfil e podem ser usadas para segmentação.</Tip>
+</ParamField>
+
+### Exemplos práticos
+
+<CodeGroup>
+
+```javascript Após login
+// Chamado após autenticação bem-sucedida
+function onLoginSuccess(user) {
+  __SmartTrack.setExternalUserContext(user.id, {
+    email: user.email,
+    name: user.name,
+    plan: user.subscription?.plan,
+    createdAt: user.createdAt
+  });
+}
+```
+
+```javascript Após cadastro
+// Chamado após registro de novo usuário
+function onSignupComplete(newUser) {
+  __SmartTrack.setExternalUserContext(newUser.id, {
+    email: newUser.email,
+    name: newUser.fullName,
+    source: 'organic',
+    trial: true
+  });
+}
+```
+
+```javascript E-commerce
+// Identificar comprador
+function onCheckout(customer) {
+  __SmartTrack.setExternalUserContext(customer.id, {
+    email: customer.email,
+    name: customer.name,
+    totalOrders: customer.orderCount,
+    ltv: customer.lifetimeValue,
+    lastPurchase: new Date().toISOString()
+  });
+}
+```
+
+</CodeGroup>
+
+<Warning>
+  Chame `setExternalUserContext` **uma vez** por sessão (após login/cadastro). Chamadas repetidas atualizam o perfil — não criam duplicatas.
+</Warning>
+
+---
+
+## 2. Capturar formulários
+
+O tracker pode capturar dados de formulários automaticamente. Existem diferentes estratégias:
+
+### Captura automática (padrão)
+
+Por padrão, o tracker detecta e captura envios de formulários automaticamente. Nenhum código extra é necessário.
+
+### Configurar estratégia de captura
+
+```javascript
+__SmartTrack.forms({
+  strategy: 'auto',        // 'auto' | 'whitelist' | 'blacklist' | 'disabled'
+  trigger: 'submit',       // 'submit' | 'change' | 'blur'
+  excludeFields: [         // Campos que NUNCA serão capturados
+    'password',
+    'credit-card',
+    'cvv',
+    'ssn'
+  ]
+});
+```
+
+### Estratégias disponíveis
+
+| Estratégia | Comportamento |
+|-----------|---------------|
+| `auto` | Captura todos os formulários automaticamente (padrão) |
+| `whitelist` | Captura **apenas** formulários específicos |
+| `blacklist` | Captura todos, **exceto** os especificados |
+| `disabled` | Desativa captura de formulários |
+
+### Exemplo: apenas formulários específicos
+
+```javascript
+__SmartTrack.forms({
+  strategy: 'whitelist',
+  include: ['#form-contato', '#form-newsletter', '.form-lead'],
+  trigger: 'submit'
+});
+```
+
+<Info>
+  **Privacidade primeiro:** campos sensíveis como `password`, `credit-card` e `cvv` são **excluídos automaticamente** por padrão, independente da estratégia escolhida.
+</Info>
+
+---
+
+## 3. Rastrear eventos customizados
+
+Envie eventos específicos do seu negócio para a UserIn:
+
+```javascript
+__SmartTrack.customEvent('nome_do_evento', {
+  // propriedades opcionais
+});
+```
+
+### Exemplos por segmento
+
+<Tabs>
+  <Tab title="E-commerce">
+    ```javascript
+    // Produto visualizado
+    __SmartTrack.customEvent('product_viewed', {
+      productId: 'SKU-123',
+      productName: 'Camiseta Premium',
+      category: 'Vestuário',
+      price: 89.90
+    });
+
+    // Adicionou ao carrinho
+    __SmartTrack.customEvent('add_to_cart', {
+      productId: 'SKU-123',
+      quantity: 2,
+      cartTotal: 179.80
+    });
+
+    // Compra finalizada
+    __SmartTrack.customEvent('purchase_completed', {
+      orderId: 'ORD-456',
+      total: 179.80,
+      items: 2,
+      paymentMethod: 'credit_card'
+    });
+    ```
+  </Tab>
+  <Tab title="SaaS">
+    ```javascript
+    // Feature utilizada
+    __SmartTrack.customEvent('feature_used', {
+      feature: 'export_report',
+      plan: 'pro'
+    });
+
+    // Upgrade de plano
+    __SmartTrack.customEvent('plan_upgraded', {
+      from: 'free',
+      to: 'pro',
+      mrr: 99.00
+    });
+
+    // Onboarding completado
+    __SmartTrack.customEvent('onboarding_completed', {
+      steps: 5,
+      durationMinutes: 12
+    });
+    ```
+  </Tab>
+  <Tab title="Conteúdo / Blog">
+    ```javascript
+    // Artigo lido
+    __SmartTrack.customEvent('article_read', {
+      title: 'Como aumentar conversões',
+      category: 'Marketing',
+      readTimeSeconds: 240
+    });
+
+    // Newsletter assinada
+    __SmartTrack.customEvent('newsletter_subscribed', {
+      source: 'blog_sidebar'
+    });
+
+    // Conteúdo compartilhado
+    __SmartTrack.customEvent('content_shared', {
+      platform: 'linkedin',
+      url: window.location.href
+    });
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## 4. Configurar eventos avançados
+
+Além dos eventos padrão, você pode ativar rastreamento comportamental avançado:
+
+```javascript
+__SmartTrack.events({
+  idle: true,           // Detecta quando o usuário fica inativo
+  rageClick: true,      // Detecta cliques frustrados (muitos cliques rápidos)
+  keyboardUsage: true,  // Padrões de uso do teclado
+  hoverFrequency: true, // Frequência de hover em elementos
+  clipboardUsage: true  // Uso de copy/paste
+});
+```
+
+<Tip>
+  **Para ativar todos os eventos de uma vez:**
+  ```javascript
+  __SmartTrack.events('all');
+  ```
+</Tip>
+
+---
+
+## Métodos úteis
+
+Referência rápida de métodos disponíveis no objeto `__SmartTrack`:
+
+| Método | Retorno | Descrição |
+|--------|---------|-----------|
+| `getLocalStorageId()` | `string` | ID persistente do visitante |
+| `getSessionId()` | `string` | ID da sessão atual |
+| `getExternalId()` | `string \| null` | ID externo (após identificação) |
+| `getCompanyId()` | `string` | ID do projeto na UserIn |
+
+---
+
+## Próximo passo
+
+Com os dados conectados, verifique se tudo está funcionando corretamente.
+
+<Card
+  title="Verificar Integração"
+  icon="arrow-right"
+  href="/onboarding/verificar-integracao"
+>
+  Confirme que os dados estão chegando e veja seus primeiros visitantes na plataforma.
+</Card>

@@ -1,33 +1,181 @@
 ---
-title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+title: "Tracker JavaScript API"
+description: "Referência completa da API JavaScript do tracker UserIn disponível via window.__SmartTrack."
+icon: "terminal"
 ---
 
-<Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
-</Note>
+## Visão geral
 
-## Welcome
+Após instalar o tracker no seu site, o objeto global `__SmartTrack` fica disponível em `window.__SmartTrack`. Através dele, você pode identificar usuários, enviar eventos e configurar o comportamento do tracker.
 
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
+<Info>
+  O tracker carrega de forma assíncrona. Se precisar garantir que ele está disponível antes de chamar métodos, verifique `typeof __SmartTrack !== 'undefined'`.
+</Info>
 
-<Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
->
-  View the OpenAPI specification file
-</Card>
+---
 
-## Authentication
+## Identificação
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
+### `setExternalUserContext(userId, properties)`
 
-```json
-"security": [
-  {
-    "bearerAuth": []
-  }
-]
+Identifica o visitante atual com dados do seu sistema.
+
+```javascript
+__SmartTrack.setExternalUserContext('user_123', {
+  email: 'maria@empresa.com',
+  name: 'Maria Silva',
+  plan: 'premium'
+});
 ```
+
+| Parâmetro | Tipo | Obrigatório | Descrição |
+|-----------|------|:-----------:|-----------|
+| `userId` | `string` | Sim | ID único do usuário no seu sistema |
+| `properties` | `object` | Não | Propriedades do perfil (email, name, etc.) |
+
+---
+
+## Eventos
+
+### `customEvent(eventType, metadata)`
+
+Envia um evento customizado para a UserIn.
+
+```javascript
+__SmartTrack.customEvent('purchase_completed', {
+  orderId: 'ORD-789',
+  total: 299.90,
+  currency: 'BRL'
+});
+```
+
+| Parâmetro | Tipo | Obrigatório | Descrição |
+|-----------|------|:-----------:|-----------|
+| `eventType` | `string` | Sim | Nome do evento |
+| `metadata` | `object` | Não | Dados adicionais do evento |
+
+### `events(config)`
+
+Configura quais eventos comportamentais o tracker deve capturar.
+
+```javascript
+// Ativar todos
+__SmartTrack.events('all');
+
+// Configurar individualmente
+__SmartTrack.events({
+  idle: true,
+  rageClick: true,
+  keyboardUsage: true,
+  hoverFrequency: true,
+  clipboardUsage: true
+});
+```
+
+| Evento | Descrição |
+|--------|-----------|
+| `idle` | Detecta inatividade do usuário |
+| `rageClick` | Detecta cliques frustrados (múltiplos cliques rápidos) |
+| `keyboardUsage` | Padrões de uso do teclado |
+| `hoverFrequency` | Frequência de hover sobre elementos |
+| `clipboardUsage` | Uso de copiar/colar |
+
+---
+
+## Formulários
+
+### `forms(config)`
+
+Configura a estratégia de captura de formulários.
+
+```javascript
+__SmartTrack.forms({
+  strategy: 'whitelist',
+  include: ['#form-contato', '#form-lead'],
+  excludeFields: ['password', 'cvv'],
+  trigger: 'submit'
+});
+```
+
+| Parâmetro | Tipo | Padrão | Descrição |
+|-----------|------|--------|-----------|
+| `strategy` | `string` | `'auto'` | `'auto'`, `'whitelist'`, `'blacklist'`, `'disabled'` |
+| `include` | `string[]` | `[]` | Seletores CSS dos formulários a capturar (whitelist) |
+| `exclude` | `string[]` | `[]` | Seletores CSS dos formulários a ignorar (blacklist) |
+| `excludeFields` | `string[]` | `['password', 'cvv']` | Nomes de campos a nunca capturar |
+| `trigger` | `string` | `'submit'` | `'submit'`, `'change'`, `'blur'` |
+
+---
+
+## Getters
+
+### `getLocalStorageId()`
+
+Retorna o ID persistente do visitante (armazenado no localStorage).
+
+```javascript
+const visitorId = __SmartTrack.getLocalStorageId();
+// "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+```
+
+### `getSessionId()`
+
+Retorna o ID da sessão atual.
+
+```javascript
+const sessionId = __SmartTrack.getSessionId();
+```
+
+### `getExternalId()`
+
+Retorna o ID externo do usuário (definido via `setExternalUserContext`). Retorna `null` se o visitante não foi identificado.
+
+```javascript
+const externalId = __SmartTrack.getExternalId();
+```
+
+### `getCompanyId()`
+
+Retorna o ID do projeto (extraído da API Key).
+
+```javascript
+const companyId = __SmartTrack.getCompanyId();
+```
+
+---
+
+## Companion (IA)
+
+### Ativação via script
+
+```html
+<script
+  src="https://smarttrack.userin.ai/tracker.js"
+  api-key="SUA_API_KEY"
+  buyer-agent="true"
+></script>
+```
+
+### Ativação via JavaScript
+
+```javascript
+__SmartTrack.setBuyerAgent(true);
+```
+
+---
+
+## Dados enviados automaticamente
+
+Cada evento enviado pelo tracker inclui automaticamente:
+
+| Campo | Descrição |
+|-------|-----------|
+| `deviceFingerprint` | Identificador único do dispositivo |
+| `localstorageId` | ID persistente do visitante |
+| `sessionId` | Identificador da sessão |
+| `companyId` | ID do projeto (extraído da API Key) |
+| `event` | Tipo do evento (pageview, click, custom, etc.) |
+| `metadata` | Dados específicos do evento |
+| `timestamp` | Data/hora do evento |
+| `url` | URL da página atual |
+| `referrer` | URL de origem |
