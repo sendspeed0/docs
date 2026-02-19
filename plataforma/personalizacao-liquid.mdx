@@ -1,0 +1,207 @@
+---
+title: "Personalização com Variáveis"
+description: "Use variáveis dinâmicas para personalizar Smart Modals, Smart Blocks, emails e SMS com dados reais de cada visitante."
+icon: "wand-magic-sparkles"
+---
+
+## O que são variáveis de personalização?
+
+Variáveis permitem que você insira **dados reais do visitante** diretamente no conteúdo dos seus modais, blocos, emails e SMS. Em vez de uma mensagem genérica, cada pessoa vê uma versão personalizada.
+
+<CardGroup cols={2}>
+  <Card title="Sem personalização" icon="xmark">
+    "Olá! Aproveite nosso bônus especial."
+  </Card>
+  <Card title="Com personalização" icon="check">
+    "Olá **João**! Você já depositou **R$ 1.250** conosco. Aproveite um bônus de **20%** no próximo depósito."
+  </Card>
+</CardGroup>
+
+## Como funciona
+
+Você escreve variáveis no formato `{{campo}}` dentro do seu texto. Quando o conteúdo é exibido ao visitante, a UserIn substitui automaticamente pelo valor real do perfil daquela pessoa.
+
+```
+Olá {{contact.firstName}}! 
+
+Seu score de intenção é {{intention.score}} e você já fez 
+{{deposits.count}} depósitos no total de R$ {{deposits.total}}.
+```
+
+Resultado para o visitante João:
+
+> Olá **João**! Seu score de intenção é **78** e você já fez **5** depósitos no total de R$ **1.250**.
+
+## Variáveis com valor padrão
+
+Se o dado não existir para um visitante (ex: ainda não informou o nome), você pode definir um **valor padrão** que aparece no lugar:
+
+```
+Olá {{contact.firstName:visitante}}!
+```
+
+- Se o nome existe: "Olá **João**!"
+- Se o nome não existe: "Olá **visitante**!"
+
+<Info>
+  O formato é `{{campo:valor_padrao}}`. Tudo depois dos dois pontos é o texto que aparece quando o campo está vazio.
+</Info>
+
+## Variáveis disponíveis
+
+### Contato
+
+| Variável | Descrição | Exemplo |
+|----------|-----------|---------|
+| `{{contact.firstName}}` | Primeiro nome | João |
+| `{{contact.lastName}}` | Sobrenome | Silva |
+| `{{contact.email}}` | Email | joao@email.com |
+| `{{contact.phone}}` | Telefone | +55 11 99999-0000 |
+
+### Financeiro
+
+| Variável | Descrição | Exemplo |
+|----------|-----------|---------|
+| `{{deposits.total}}` | Total gasto | 2500 |
+| `{{deposits.count}}` | Quantidade de compras | 8 |
+| `{{deposits.average}}` | Ticket médio | 312.50 |
+| `{{deposits.tier}}` | Classificação | high |
+| `{{deposits.ftd.amount}}` | Valor da 1a compra | 50 |
+
+### Comportamento
+
+| Variável | Descrição | Exemplo |
+|----------|-----------|---------|
+| `{{behavior.sessionsPerWeek}}` | Sessões/semana | 3.2 |
+| `{{behavior.totalSessions}}` | Total de sessões | 42 |
+
+### Intenção
+
+| Variável | Descrição | Exemplo |
+|----------|-----------|---------|
+| `{{intention.score}}` | Score (0-100) | 78 |
+| `{{intention.level}}` | Nível | high |
+
+### Identidade
+
+| Variável | Descrição | Exemplo |
+|----------|-----------|---------|
+| `{{externalId}}` | ID do usuário | user_12345 |
+| `{{stage}}` | Estágio | ftd |
+
+### Jogos (iGaming)
+
+| Variável | Descrição | Exemplo |
+|----------|-----------|---------|
+| `{{game.name}}` | Nome do jogo favorito | Fortune Tiger |
+| `{{game.category}}` | Categoria | slots |
+| `{{game.provider}}` | Provedor | PG Soft |
+
+### Saldo (iGaming)
+
+| Variável | Descrição | Exemplo |
+|----------|-----------|---------|
+| `{{balanceRealtime.current}}` | Saldo atual | 200 |
+
+## Onde usar variáveis
+
+Variáveis funcionam em todos os canais da UserIn:
+
+<AccordionGroup>
+  <Accordion title="Smart Modals" icon="window-maximize">
+    Use variáveis no **título**, **corpo** e **botões** do modal. O editor mostra um preview com dados de exemplo.
+
+    Exemplo de título: `{{contact.firstName:Ei}}, temos uma oferta para você!`
+  </Accordion>
+
+  <Accordion title="Smart Blocks" icon="puzzle-piece">
+    Personalize blocos embutidos na página. Ideal para banners e CTAs que mudam de acordo com o visitante.
+
+    Exemplo: `Faltam R$ {{deposits.ftd.amount:50}} para desbloquear o nível Gold!`
+  </Accordion>
+
+  <Accordion title="Emails" icon="envelope">
+    Personalize assunto e corpo do email enviado por jornadas.
+
+    Exemplo de assunto: `{{contact.firstName}}, sentimos sua falta!`
+  </Accordion>
+
+  <Accordion title="SMS" icon="message">
+    Personalize a mensagem de texto.
+
+    Exemplo: `Oi {{contact.firstName:amigo}}! Deposite R$50 e ganhe 20% de bônus. Seu tier atual: {{deposits.tier}}`
+  </Accordion>
+</AccordionGroup>
+
+## O Picker de Variáveis
+
+Para facilitar, a UserIn oferece um **seletor de variáveis** (botão `{ }`) nos editores de texto. Ao clicar:
+
+<Steps>
+  <Step title="Clique no botão de variáveis">
+    Procure o botão `{ }` ao lado do campo de texto.
+  </Step>
+  <Step title="Busque ou navegue">
+    As variáveis são organizadas por grupo (Contato, Financeiro, etc.). Use a busca para encontrar rapidamente.
+  </Step>
+  <Step title="Clique para inserir">
+    Ao clicar na variável, ela é inserida automaticamente no campo de texto na posição do cursor.
+  </Step>
+  <Step title="Adicione valor padrão (opcional)">
+    Edite a variável para adicionar um fallback: `{{contact.firstName}}` vira `{{contact.firstName:amigo}}`.
+  </Step>
+</Steps>
+
+## Configurar variáveis disponíveis
+
+Você pode controlar quais campos aparecem no picker de variáveis:
+
+<Steps>
+  <Step title="Acesse Objetos no menu lateral">
+    Navegue até a seção de Ontologia.
+  </Step>
+  <Step title="Expanda um campo">
+    Clique em qualquer campo para ver seus detalhes.
+  </Step>
+  <Step title="Ative ou desative">
+    Use o toggle **"Usar em personalização de templates"** para controlar se o campo aparece no picker de variáveis.
+  </Step>
+</Steps>
+
+<Info>
+  Por padrão, os campos mais comuns já vêm ativados: nome, email, telefone, total de depósitos, tier, score de intenção, etc.
+</Info>
+
+## Boas práticas
+
+<AccordionGroup>
+  <Accordion title="Sempre use valor padrão" icon="shield">
+    Nem todo visitante terá todos os dados preenchidos. Use valores padrão para evitar textos vazios:
+
+    **Bom:** `Olá {{contact.firstName:visitante}}`
+    **Ruim:** `Olá {{contact.firstName}}` (pode mostrar "Olá " sem nome)
+  </Accordion>
+
+  <Accordion title="Não exagere na personalização" icon="circle-exclamation">
+    Use 2-3 variáveis por mensagem no máximo. Excesso de personalização pode parecer invasivo.
+  </Accordion>
+
+  <Accordion title="Teste com o Preview" icon="eye">
+    O editor mostra um preview com dados de exemplo. Verifique se o texto faz sentido com e sem os dados preenchidos.
+  </Accordion>
+
+  <Accordion title="Escolha variáveis relevantes" icon="crosshairs">
+    Use variáveis que fazem sentido no contexto. Em um SMS de retenção, mencionar o tier e dias sem compra é mais relevante que o ID externo.
+  </Accordion>
+</AccordionGroup>
+
+## Próximos passos
+
+<CardGroup cols={2}>
+  <Card title="Ontologia de Dados" icon="arrow-left" href="/plataforma/ontologia">
+    Entenda como todos os dados são organizados na plataforma.
+  </Card>
+  <Card title="Campos e Atributos" icon="arrow-left" href="/plataforma/campos-e-atributos">
+    Veja a lista completa de campos disponíveis.
+  </Card>
+</CardGroup>

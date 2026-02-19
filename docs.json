@@ -28,6 +28,15 @@
               "onboarding/conectando-dados",
               "onboarding/verificar-integracao"
             ]
+          },
+          {
+            "group": "Plataforma",
+            "pages": [
+              "plataforma/ontologia",
+              "plataforma/campos-e-atributos",
+              "plataforma/sinais-e-outputs",
+              "plataforma/personalizacao-liquid"
+            ]
           }
         ]
       },

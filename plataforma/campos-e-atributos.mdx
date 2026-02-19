@@ -1,0 +1,211 @@
+---
+title: "Campos e Atributos"
+description: "Lista completa de todos os campos disponíveis no perfil do visitante e como usá-los em regras, segmentos e personalizações."
+icon: "table-list"
+---
+
+## Campos disponíveis
+
+Cada visitante do seu site acumula dados em seu perfil. Abaixo estão todos os campos que você pode usar para criar regras, segmentos e personalizar conteúdo.
+
+<Info>
+  Os campos marcados com **Regras** podem ser usados como condição em regras e jornadas. Os marcados com **Liquid** podem ser usados para personalizar textos em templates.
+</Info>
+
+## Ciclo de Vida
+
+O campo mais importante para segmentar seus visitantes.
+
+| Campo | Descrição | Valores possíveis |
+|-------|-----------|-------------------|
+| **Estágio** | Fase atual do visitante na jornada de cliente | Anônimo, Registrado, FTD, Recorrente |
+
+<Tip>
+  Use o estágio como primeira condição nas suas regras. Por exemplo: "Se o estágio é **Anônimo** E visitou a página de preços" para exibir um modal de cadastro.
+</Tip>
+
+## Financeiro
+
+Dados sobre transações e gastos do visitante.
+
+| Campo | Descrição | Tipo | Exemplo |
+|-------|-----------|------|---------|
+| **Total Depositado** | Soma de todos os valores | Número | R$ 2.500 |
+| **Qtd. de Depósitos** | Quantas transações realizou | Número | 8 |
+| **Ticket Médio** | Valor médio por transação | Número | R$ 312,50 |
+| **Valor do 1o Depósito** | Quanto pagou na primeira vez | Número | R$ 50 |
+| **Dias Desde Último Depósito** | Há quanto tempo não compra | Número | 14 |
+| **Tier de Depósitos** | Classificação por faixa de valor | Lista | None, Low, Medium, High, Whale |
+| **Tendência** | Os gastos estão subindo ou caindo? | Lista | Aumentando, Estável, Diminuindo |
+
+### Exemplos de uso em regras
+
+<AccordionGroup>
+  <Accordion title="Identificar clientes VIP">
+    **Condição:** Total Depositado *maior que* R$ 5.000 **E** Tier *igual a* Whale
+
+    **Ação:** Adicionar tag "VIP" e exibir modal de programa de fidelidade.
+  </Accordion>
+  <Accordion title="Reativar clientes inativos">
+    **Condição:** Dias Desde Último Depósito *maior que* 30 **E** Total Depositado *maior que* R$ 100
+
+    **Ação:** Enviar SMS com oferta especial de retorno.
+  </Accordion>
+</AccordionGroup>
+
+## Comportamento
+
+Como o visitante interage com seu site.
+
+| Campo | Descrição | Tipo | Exemplo |
+|-------|-----------|------|---------|
+| **Total de Sessões** | Quantas vezes visitou o site | Número | 42 |
+| **Duração Média** | Tempo médio por visita (minutos) | Número | 8,5 |
+| **Sessões por Semana** | Frequência de acesso | Número | 3,2 |
+| **Dispositivos** | Quantos aparelhos diferentes usou | Número | 2 |
+
+## Temporal
+
+Quando o visitante acessa e o melhor momento para contactá-lo.
+
+| Campo | Descrição | Tipo | Exemplo |
+|-------|-----------|------|---------|
+| **Primeiro Acesso** | Data e hora da primeira visita | Data | 15/01/2026 |
+| **Última Atualização** | Quando o perfil foi atualizado | Data | 19/02/2026 |
+| **Melhor Hora** | Hora do dia mais ativa (0-23) | Número | 14 |
+| **Melhor Dia da Semana** | Dia mais ativo (Dom=0, Sáb=6) | Número | 2 (Terça) |
+
+<Tip>
+  O campo **Melhor Hora** é calculado automaticamente pela plataforma analisando o padrão de sessões do visitante. Use-o para agendar envio de SMS e emails no horário ideal.
+</Tip>
+
+## Preferências
+
+O que o visitante mais gosta e procura.
+
+| Campo | Descrição | Tipo | Exemplo |
+|-------|-----------|------|---------|
+| **Total de Page Views** | Quantas páginas viu no total | Número | 156 |
+| **Páginas Únicas** | Quantas páginas diferentes visitou | Número | 23 |
+
+### Campos adicionais para iGaming
+
+| Campo | Descrição | Tipo |
+|-------|-----------|------|
+| **Visitas Casino** | Acessos a páginas de cassino | Número |
+| **Visitas Sports** | Acessos a apostas esportivas | Número |
+| **Visitas Slots** | Acessos a páginas de slots | Número |
+
+## Navegação
+
+Dados detalhados sobre as páginas visitadas.
+
+| Campo | Descrição | Tipo |
+|-------|-----------|------|
+| **Páginas da Última Sessão** | Lista de páginas da sessão atual | Lista |
+| **Todas as Páginas Visitadas** | Histórico completo de páginas | Lista |
+
+<Tip>
+  Use "Páginas da Última Sessão *contém* /precos" para detectar visitantes que estão avaliando seus planos neste momento.
+</Tip>
+
+## Saldo em Tempo Real (iGaming)
+
+Monitoramento de saldo durante a sessão do jogador.
+
+| Campo | Descrição | Tipo | Exemplo |
+|-------|-----------|------|---------|
+| **Saldo Atual** | Saldo neste momento | Número | R$ 200 |
+| **Saldo Início Sessão** | Saldo quando entrou | Número | R$ 500 |
+| **Ganhou/Perdeu (R$)** | Diferença na sessão | Número | -R$ 300 |
+| **Ganhou/Perdeu (%)** | Variação percentual | Número | -60% |
+
+<Warning>
+  Campos de Saldo em Tempo Real são atualizados apenas durante a sessão ativa do visitante e exigem integração com a plataforma de jogos.
+</Warning>
+
+## Intenção (Outputs de IA)
+
+Valores calculados automaticamente pela IA da UserIn.
+
+| Campo | Descrição | Tipo | Exemplo |
+|-------|-----------|------|---------|
+| **Score de Intenção** | Probabilidade de converter (0-100) | Número | 78 |
+| **Nível de Intenção** | Classificação simplificada | Lista | Alto, Médio, Baixo |
+| **Próximo Passo** | Recomendação da IA | Texto | "Oferecer bônus de primeiro depósito" |
+
+<Info>
+  O Score de Intenção é recalculado diariamente e leva em conta: frequência de sessões, duração, páginas visitadas, estágio do visitante e padrão de navegação.
+</Info>
+
+## Tags
+
+Tags são rótulos que **você controla**. Diferente dos outros campos que são calculados automaticamente, as tags são adicionadas e removidas pelas suas jornadas e regras.
+
+| Operação | Descrição | Exemplo |
+|----------|-----------|---------|
+| **Tem Tag** | Verifica se o visitante possui uma tag | Tem tag "VIP" |
+| **Não Tem Tag** | Verifica se NÃO possui uma tag | Não tem tag "onboarding_completo" |
+
+### Tags comuns
+
+- `vip` — Cliente de alto valor
+- `churn_risk` — Risco de abandono
+- `onboarding_completo` — Concluiu o fluxo inicial
+- `carrinho_abandonado` — Deixou itens no carrinho
+- `primeiro_deposito` — Acabou de fazer a primeira compra
+
+## Contato
+
+Informações pessoais capturadas via formulário, integração ou API.
+
+| Campo | Descrição | Personalização |
+|-------|-----------|---------------|
+| **Nome** | Nome completo | `{{contact.firstName}}` |
+| **Sobrenome** | Apelido/último nome | `{{contact.lastName}}` |
+| **Email** | Endereço de email | `{{contact.email}}` |
+| **Telefone** | Número de telefone | `{{contact.phone}}` |
+
+## Objetos relacionados (iGaming)
+
+Dados de entidades conectadas ao perfil do visitante.
+
+### Game (Jogos)
+
+| Campo | Descrição | Personalização |
+|-------|-----------|---------------|
+| **Nome do Jogo** | Nome do jogo favorito | `{{game.name}}` |
+| **Categoria** | Tipo do jogo (slots, crash, casino) | `{{game.category}}` |
+| **Provedor** | Empresa que fornece o jogo | `{{game.provider}}` |
+| **URL** | Link para o jogo | `{{game.url}}` |
+| **RTP** | Percentual de retorno ao jogador | `{{game.rtp}}` |
+
+## Usando campos em condições
+
+Ao criar uma regra ou condição no Journey Builder, você escolhe:
+
+<Steps>
+  <Step title="O tipo de condição">
+    Selecione **Atributo do Usuário** para usar qualquer campo do perfil.
+  </Step>
+  <Step title="O campo">
+    Escolha o campo da lista. Os campos são organizados por grupo (Financeiro, Comportamento, etc.).
+  </Step>
+  <Step title="O operador">
+    Defina a comparação: *igual a*, *maior que*, *contém*, *existe*, etc.
+  </Step>
+  <Step title="O valor">
+    Informe o valor para comparação. Para campos de lista (como Tier), as opções aparecerão automaticamente.
+  </Step>
+</Steps>
+
+## Próximos passos
+
+<CardGroup cols={2}>
+  <Card title="Sinais e Outputs" icon="arrow-right" href="/plataforma/sinais-e-outputs">
+    Entenda como a plataforma gera automaticamente insights como tier, tendência e score de intenção.
+  </Card>
+  <Card title="Personalização com Liquid" icon="arrow-right" href="/plataforma/personalizacao-liquid">
+    Aprenda a usar variáveis para personalizar modais, emails e SMS.
+  </Card>
+</CardGroup>
