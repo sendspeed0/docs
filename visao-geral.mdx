@@ -1,88 +1,249 @@
 ---
 title: "Visão Geral"
-description: "Entenda como a UserIn funciona e como cada peça se conecta para transformar dados em resultados."
+description: "Entenda a arquitetura da UserIn e como cada componente trabalha junto para transformar visitantes em clientes."
 icon: "map"
 ---
 
-## Como a UserIn funciona
+## Arquitetura da Plataforma
 
-A UserIn é uma plataforma completa de inteligência comportamental. Ela coleta dados do seu site, processa em tempo real e permite que você tome ações automatizadas baseadas no comportamento dos seus visitantes.
+A UserIn opera em três camadas: **Coleta**, **Processamento** e **Ação**. Dados fluem do seu site para a plataforma em tempo real, são enriquecidos e transformados em ações automatizadas.
 
 ```mermaid
 flowchart LR
-    A[Seu Site] -->|Tracker.js| B[UserIn Platform]
-    B --> C[Perfis de Visitantes]
-    B --> D[Segmentos Dinâmicos]
-    C --> E[Jornadas Automatizadas]
-    D --> E
-    E --> F[Smart Modals]
-    E --> G[Smart Blocks]
-    E --> H[Companion AI]
+    subgraph Coleta
+        A[Seu Site] -->|tracker.js| B[Eventos]
+        A -->|API| C[Dados de Backend]
+    end
+    
+    subgraph Processamento
+        B --> D[UserIn Platform]
+        C --> D
+        D --> E[Perfis Unificados]
+        D --> F[Segmentos Dinâmicos]
+        D --> G[Sinais Computados]
+    end
+    
+    subgraph Ação
+        E --> H[Journey Builder]
+        F --> H
+        G --> H
+        H --> I[Smart Modals]
+        H --> J[Smart Blocks]
+        H --> K[Companion AI]
+        H --> L[Webhooks]
+    end
 ```
 
-## Componentes principais
+---
+
+## Componentes Principais
 
 <AccordionGroup>
-  <Accordion title="Tracker" icon="satellite-dish">
-    Um script JavaScript leve que você adiciona ao seu site. Ele captura automaticamente:
-    - **Page views** — cada página visitada
-    - **Cliques** — interações com elementos
-    - **Formulários** — dados preenchidos (com controle de privacidade)
-    - **Scroll** — profundidade de leitura
-    - **Sessões** — tempo no site, páginas por visita
-    - **Eventos customizados** — qualquer ação que você queira rastrear
+  <Accordion title="Tracker JavaScript" icon="satellite-dish" defaultOpen>
+    Script leve (~8KB gzipped) que você adiciona ao seu site. Captura automaticamente:
+    
+    | Evento | Descrição |
+    |--------|-----------|
+    | `page_view` | Cada página visitada com URL, título e referrer |
+    | `click` | Interações com elementos (botões, links, CTAs) |
+    | `form_submit` | Dados de formulários com controle de privacidade |
+    | `scroll_depth` | Profundidade de leitura (25%, 50%, 75%, 100%) |
+    | `session` | Tempo no site, páginas por visita, frequência |
+    | `custom` | Qualquer evento que você queira rastrear via API |
+    
+    <Tip>
+      O tracker funciona em SPAs (React, Vue, Next.js) e sites tradicionais sem configuração extra.
+    </Tip>
   </Accordion>
 
-  <Accordion title="Perfis de Visitantes" icon="user">
-    Cada visitante recebe um perfil único que acumula todo o histórico comportamental. Quando o visitante se identifica (login, formulário, etc.), o perfil anônimo é unificado com os dados reais.
+  <Accordion title="Perfis de Visitantes" icon="user-circle">
+    Todo visitante recebe um **perfil único** que persiste entre sessões. O perfil acumula:
+    
+    - **Histórico completo** de páginas visitadas
+    - **Eventos** e interações realizadas
+    - **Atributos** coletados (nome, email, empresa, etc.)
+    - **Sinais computados** (lead score, engajamento, etc.)
+    - **Segmentos** aos quais pertence
+    
+    Quando um visitante anônimo se identifica (login, formulário, compra), a UserIn **unifica automaticamente** todo o histórico anônimo com o perfil identificado.
+    
+    ```javascript
+    // Identificar um visitante
+    userin.identify('user_123', {
+      email: 'joao@empresa.com',
+      name: 'João Silva',
+      plan: 'enterprise'
+    });
+    ```
   </Accordion>
 
-  <Accordion title="Segmentos" icon="users">
-    Agrupe visitantes automaticamente com base em regras comportamentais. Por exemplo:
-    - Visitantes que viram a página de preços mais de 3 vezes
-    - Usuários que abandonaram o carrinho nos últimos 7 dias
-    - Leads que interagiram com o Companion
+  <Accordion title="Segmentos Dinâmicos" icon="users-viewfinder">
+    Agrupe visitantes automaticamente com regras comportamentais. Segmentos são **avaliados em tempo real** — quando um visitante muda de comportamento, ele entra ou sai do segmento instantaneamente.
+    
+    **Exemplos de segmentos:**
+    - Visitou `/pricing` mais de 3 vezes nos últimos 7 dias
+    - Abandonou carrinho com valor acima de R$ 500
+    - Não logou há mais de 30 dias (risco de churn)
+    - Completou onboarding mas não usou feature X
+    
+    <Info>
+      Segmentos podem ser usados como gatilhos em Jornadas ou para filtrar dashboards de analytics.
+    </Info>
   </Accordion>
 
-  <Accordion title="Jornadas (Journey Builder)" icon="route">
-    Um editor visual drag-and-drop onde você cria fluxos de automação. Conecte gatilhos, condições e ações para criar experiências personalizadas automaticamente.
+  <Accordion title="Ontologia e Campos" icon="diagram-project">
+    A Ontologia permite que você **estenda o modelo de dados** da UserIn para seu domínio específico:
+    
+    - **Campos customizados**: Adicione atributos específicos do seu negócio (cargo, empresa, LTV, etc.)
+    - **Objetos**: Crie entidades como Produtos, Pedidos, Assinaturas
+    - **Relacionamentos**: Conecte visitantes a objetos (comprou Produto X, pertence à Empresa Y)
+    - **Sinais**: Compute métricas derivadas (lead score = f(engajamento, perfil, comportamento))
+    
+    [Saiba mais sobre Ontologia →](/plataforma/ontologia)
+  </Accordion>
+
+  <Accordion title="Journey Builder" icon="route">
+    Editor visual **drag-and-drop** para criar automações sofisticadas:
+    
+    **Gatilhos (Triggers):**
+    - Evento ocorreu (page view, clique, form submit)
+    - Entrou/saiu de segmento
+    - Tempo desde última visita
+    - Webhook externo
+    
+    **Condições:**
+    - Verificar atributos do perfil
+    - Avaliar regras comportamentais
+    - Split A/B para testes
+    
+    **Ações:**
+    - Exibir Smart Modal ou Smart Block
+    - Ativar Companion AI
+    - Enviar webhook para seu backend
+    - Adicionar/remover de segmento
+    - Atualizar atributos do perfil
+    
+    <Warning>
+      Jornadas processam eventos em **tempo real**. Um visitante pode entrar em múltiplas jornadas simultaneamente.
+    </Warning>
   </Accordion>
 
   <Accordion title="Smart Modals" icon="window-maximize">
-    Modais que aparecem com base em regras comportamentais. Totalmente customizáveis com imagens, HTML personalizado e botões de CTA com efeitos.
+    Modais totalmente customizáveis que aparecem baseados em **regras comportamentais**:
+    
+    - **Templates prontos** ou HTML/CSS customizado
+    - **Gatilhos inteligentes**: scroll, tempo na página, intenção de saída
+    - **Frequência controlada**: evite mostrar o mesmo modal repetidamente
+    - **Métricas**: impressões, cliques, conversões, receita atribuída
+    
+    Combine com **personalização Liquid** para exibir conteúdo dinâmico baseado no perfil do visitante.
   </Accordion>
 
-  <Accordion title="Companion (IA)" icon="robot">
-    Assistente de IA que conversa com seus visitantes em tempo real, entendendo o contexto da navegação para oferecer ajuda relevante e proativa.
+  <Accordion title="Companion AI" icon="message-bot">
+    Assistente de IA que **entende o contexto** da navegação do visitante:
+    
+    - Sabe quais páginas o visitante viu
+    - Conhece o histórico de interações
+    - Responde perguntas sobre seu produto/serviço
+    - Oferece ajuda proativa no momento certo
+    - Pode executar ações (capturar lead, agendar demo, etc.)
+    
+    O Companion é treinado com seu conteúdo e pode ser ativado via Jornadas ou automaticamente.
   </Accordion>
 </AccordionGroup>
 
-## Fluxo típico de configuração
+---
+
+## Fluxo de Implementação
 
 <Steps>
-  <Step title="Instale o Tracker" icon="1">
-    Adicione o script ao seu site. [Ver guia de instalação →](/onboarding/instalar-tracker)
+  <Step title="Instalar o Tracker" icon="download">
+    Adicione o script ao seu site. Funciona em qualquer stack.
+    
+    ```html
+    <script src="https://cdn.userin.ai/tracker.js" data-key="uk_xxx"></script>
+    ```
+    
+    [Guia completo de instalação →](/onboarding/instalar-tracker)
   </Step>
-  <Step title="Identifique Usuários" icon="2">
-    Conecte seus dados de login/cadastro ao tracker. [Ver como conectar →](/onboarding/conectando-dados)
+  
+  <Step title="Identificar Usuários" icon="fingerprint">
+    Conecte o tracker ao seu sistema de autenticação para unificar perfis.
+    
+    ```javascript
+    // Quando o usuário logar
+    userin.identify(user.id, {
+      email: user.email,
+      name: user.name
+    });
+    ```
+    
+    [Como conectar dados →](/onboarding/conectando-dados)
   </Step>
-  <Step title="Crie Segmentos" icon="3">
-    Defina regras para agrupar visitantes por comportamento.
+  
+  <Step title="Criar Segmentos" icon="layer-group">
+    Defina regras para agrupar visitantes por comportamento. Use a interface visual ou a API.
   </Step>
-  <Step title="Monte Jornadas" icon="4">
-    Use o Journey Builder para criar automações com Smart Modals, notificações e mais.
+  
+  <Step title="Montar Jornadas" icon="sitemap">
+    Use o Journey Builder para criar automações. Comece simples: um modal de boas-vindas para novos visitantes.
   </Step>
-  <Step title="Analise Resultados" icon="5">
-    Acompanhe métricas de engajamento e converta mais visitantes em clientes.
+  
+  <Step title="Analisar e Otimizar" icon="chart-line">
+    Acompanhe métricas no dashboard. Teste variações. Itere baseado em dados reais.
   </Step>
 </Steps>
 
-## Próximo passo
+---
 
-<Card
-  title="Primeiros Passos"
-  icon="arrow-right"
-  href="/onboarding/primeiros-passos"
->
-  Comece agora: crie sua conta e instale o tracker em menos de 5 minutos.
-</Card>
+## Arquitetura Técnica
+
+<Tabs>
+  <Tab title="Frontend">
+    O tracker é um script JavaScript puro, sem dependências. Funciona via:
+    - Tag `<script>` tradicional
+    - NPM package para SPAs
+    - Google Tag Manager
+    
+    Dados são enviados via HTTPS para nossos endpoints com batching automático para performance.
+  </Tab>
+  
+  <Tab title="Backend">
+    Nossa API REST permite:
+    - Enviar eventos server-side
+    - Criar/atualizar perfis
+    - Gerenciar segmentos programaticamente
+    - Disparar jornadas via webhook
+    
+    [Ver API Reference →](/api-reference/introduction)
+  </Tab>
+  
+  <Tab title="Processamento">
+    Eventos são processados em **tempo real** (~100ms latência):
+    - Avaliação de segmentos
+    - Execução de jornadas
+    - Computação de sinais
+    - Indexação para analytics
+  </Tab>
+</Tabs>
+
+---
+
+## Próximos Passos
+
+<CardGroup cols={2}>
+  <Card
+    title="Primeiros Passos"
+    icon="play"
+    href="/onboarding/primeiros-passos"
+  >
+    Crie sua conta e configure seu primeiro projeto agora.
+  </Card>
+  <Card
+    title="API Reference"
+    icon="code"
+    href="/api-reference/introduction"
+  >
+    Documentação completa da API para integrações avançadas.
+  </Card>
+</CardGroup>
