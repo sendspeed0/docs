@@ -1,83 +1,130 @@
 ---
 title: "Primeiros Passos"
-description: "Crie sua conta, configure seu projeto e prepare tudo para começar a capturar dados do seu site."
+description: "Do zero ao primeiro dado capturado em 5 minutos. Crie sua conta, configure seu projeto e prepare tudo para instalar o tracker."
 icon: "rocket"
 ---
 
-## Bem-vindo à UserIn
+## Do zero ao primeiro dado em 5 minutos
 
-Em poucos minutos você terá a UserIn capturando dados comportamentais do seu site. Este guia vai te levar do zero ao primeiro dado recebido.
+Você vai criar sua conta, configurar seu domínio e copiar sua API Key. Quando terminar, estará pronto para instalar o tracker e começar a capturar dados.
 
-<Info>
-  **Tempo estimado:** 5 minutos para concluir todo o setup inicial.
-</Info>
+<div className="callout-blue">
+  **Tempo estimado:** 5 minutos para concluir todo o setup inicial. Sem dependências, sem configuração de servidor.
+</div>
 
-## 1. Acesse a plataforma
+---
+
+## 1. Crie sua conta
 
 <Steps>
-  <Step title="Crie sua conta ou faça login">
-    Acesse [app.userin.ai](https://app.userin.ai) e crie sua conta. Se já tem uma conta, faça login normalmente.
+  <Step title="Acesse a plataforma">
+    Abra [app.userin.ai](https://app.userin.ai) e crie sua conta com email e senha. Se você já tem acesso, faça login normalmente.
   </Step>
-  <Step title="Acesse o painel">
-    Após o login, você será direcionado ao painel principal da plataforma.
+  <Step title="Conheça o painel Início">
+    Após o login, você verá o painel **Início** com um checklist de configuração. Ele guia você pelas quatro etapas iniciais: conectar dados, criar segmento, criar componentes e criar jornadas.
+
+    <Frame caption="Painel Início da UserIn com o checklist de primeiros passos">
+      <img src="/images/onboarding/dashboard-inicial.png" alt="Painel Início da UserIn com checklist de onboarding" />
+    </Frame>
   </Step>
 </Steps>
 
-## 2. Obtenha sua API Key
+---
 
-A API Key é o identificador único do seu projeto. Ela é usada pelo tracker para enviar dados para a sua conta.
+## 2. Configure sua empresa
+
+O primeiro item do checklist é **Conectar dados**. Ao clicar, você será levado para a tela de **Configuração da Empresa**, onde define o domínio do seu site e a categoria do negócio.
+
+<Steps>
+  <Step title="Informe o domínio do seu site">
+    Digite a URL base do seu site (sem barra no final). Exemplo: `https://seusite.com.br`
+  </Step>
+  <Step title="Selecione a categoria do negócio">
+    Escolha a categoria que melhor descreve sua operação. Ela define as regras padrão de categorização de páginas.
+
+    <Frame caption="Configuração da Empresa: domínio, categoria e sitemap">
+      <img src="/images/onboarding/configuracao-empresa.png" alt="Tela de Configuração da Empresa com domínio e sitemap" />
+    </Frame>
+  </Step>
+  <Step title="Configure o sitemap (opcional)">
+    Se seu site possui um sitemap, informe a URL ou clique em **Descobrir Páginas** para que a UserIn encontre automaticamente via `robots.txt`.
+  </Step>
+  <Step title="Salve as configurações">
+    Clique em **Salvar Configurações** para confirmar.
+  </Step>
+</Steps>
+
+---
+
+## 3. Copie sua API Key
+
+A API Key identifica seu projeto. O tracker usa essa chave para saber para qual conta enviar os dados capturados.
 
 <Steps>
   <Step title="Acesse as Configurações">
     No menu lateral, clique em **Configurações** (ícone de engrenagem).
   </Step>
-  <Step title="Encontre sua API Key">
-    Na seção **Integração**, você encontrará sua **API Key**. Ela é um token JWT que contém o identificador do seu projeto.
+  <Step title="Localize a API Key">
+    Clique na aba **API Keys**. Aqui você encontra suas chaves de API e os domínios autorizados para o tracker.
 
-    <Warning>
-      **Mantenha sua API Key segura.** Embora ela seja uma chave pública (usada no frontend), não a compartilhe desnecessariamente.
-    </Warning>
+    <Frame caption="Configurações > API Keys: copie suas chaves e configure os domínios autorizados">
+      <img src="/images/onboarding/api-key-configuracoes.png" alt="Tela de Configurações na aba API Keys com chaves de API e domínios autorizados" />
+    </Frame>
+
+    <div className="callout-blue">
+      **Mantenha sua API Key segura.** Embora seja uma chave pública (usada no frontend), não a compartilhe desnecessariamente.
+    </div>
   </Step>
-  <Step title="Copie a API Key">
-    Clique no botão de copiar ao lado da API Key. Você vai precisar dela no próximo passo.
+  <Step title="Copie a chave">
+    Clique no botão de copiar ao lado da API Key. Você vai usar essa chave no próximo passo.
 
-    Ela se parece com algo assim:
+    O formato é parecido com este:
     ```
     eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb21wYW55SWQiOiI2O...
     ```
   </Step>
 </Steps>
 
-## 3. Entenda a estrutura
+---
 
-Antes de instalar, entenda o que vai acontecer:
+## 4. Entenda o que vai acontecer
+
+Antes de instalar o tracker, veja o que ele faz automaticamente e o que fica sob seu controle:
 
 <CardGroup cols={2}>
-  <Card title="O que o Tracker captura" icon="eye">
-    - Page views automáticos
-    - Cliques em elementos
-    - Envio de formulários
-    - Comportamento de scroll
-    - Tempo na página
-    - Origem do tráfego
+  <Card title="O que o Tracker captura sozinho" icon="eye">
+    Assim que o script carregar, ele registra automaticamente:
+    - Page views com URL, título e referrer
+    - Cliques em botões, links e CTAs
+    - Envios de formulários (com controle de privacidade)
+    - Profundidade de scroll (25%, 50%, 75%, 100%)
+    - Tempo na página e duração da sessão
+    - Origem do tráfego e dispositivo
   </Card>
-  <Card title="O que você controla" icon="sliders">
-    - Identificação de usuários
-    - Eventos customizados
-    - Quais formulários capturar
-    - Ativação do Companion (IA)
-    - Componentes visuais (modais, etc.)
+  <Card title="O que você configura" icon="sliders">
+    Você decide quando e como usar os dados capturados:
+    - Identificação de usuários logados
+    - Eventos customizados do seu negócio
+    - Quais formulários rastrear (whitelist/blacklist)
+    - Componentes visuais (modais, smart blocks, minigames)
+    - Automações via Editor de Fluxos
   </Card>
 </CardGroup>
 
+<Tip>
+  **Comece só com a captura automática.** Você não precisa configurar eventos customizados ou identificação de usuários agora. O tracker já entrega valor capturando comportamento anônimo. Conecte os dados ao seu sistema quando estiver pronto.
+</Tip>
+
+---
+
 ## Próximo passo
 
-Agora que você tem sua API Key, é hora de instalar o tracker no seu site.
+Com a empresa configurada e a API Key em mãos, o próximo passo é instalar o tracker no seu site.
 
 <Card
   title="Instalar o Tracker"
-  icon="arrow-right"
+  icon="code"
   href="/onboarding/instalar-tracker"
 >
-  Adicione uma linha de código ao seu site e comece a capturar dados.
+  Adicione o script ao seu site e comece a capturar dados em menos de 1 minuto.
 </Card>

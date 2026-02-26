@@ -1,0 +1,24 @@
+.callout-blue {
+  background-color: #EEF0FD;
+  border: 1px solid #0020E7;
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin: 16px 0;
+  color: #0020E7;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.callout-blue strong {
+  color: #0020E7;
+}
+
+.dark .callout-blue {
+  background-color: rgba(0, 32, 231, 0.12);
+  border-color: #99A6F5;
+  color: #C4CBF9;
+}
+
+.dark .callout-blue strong {
+  color: #99A6F5;
+}
