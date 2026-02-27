@@ -1,12 +1,12 @@
 ---
 title: "Instalar o Tracker"
-description: "Adicione o script de rastreamento da UserIn ao seu site em uma única linha de código."
+description: "Uma linha de código no seu site. Sem dependências, sem build. O tracker começa a capturar dados automaticamente."
 icon: "code"
 ---
 
-## Instalação rápida
+## Uma linha de código para começar a capturar
 
-Adicione o seguinte script ao `<head>` ou antes do fechamento do `</body>` em todas as páginas do seu site:
+Cole o script abaixo no `<head>` do seu site e substitua `SUA_API_KEY_AQUI` pela chave que você copiou nos [Primeiros Passos](/onboarding/primeiros-passos):
 
 ```html
 <script
@@ -15,15 +15,15 @@ Adicione o seguinte script ao `<head>` ou antes do fechamento do `</body>` em to
 ></script>
 ```
 
-<Tip>
-  **Recomendamos** colocar o script no `<head>` para capturar dados desde o primeiro momento do carregamento da página.
-</Tip>
-
-Substitua `SUA_API_KEY_AQUI` pela API Key que você copiou nos [Primeiros Passos](/onboarding/primeiros-passos).
+<div className="callout-blue">
+  **Recomendação:** coloque o script no `<head>` para capturar dados desde o primeiro momento do carregamento da página.
+</div>
 
 ---
 
 ## Instalação por plataforma
+
+Cada stack tem suas particularidades. Encontre a sua abaixo:
 
 <AccordionGroup>
   <Accordion title="HTML puro" icon="file-code">
@@ -49,9 +49,9 @@ Substitua `SUA_API_KEY_AQUI` pela API Key que você copiou nos [Primeiros Passos
   </Accordion>
 
   <Accordion title="WordPress" icon="wordpress">
-    **Opção 1 — Via plugin (recomendado):**
+    **Via plugin (recomendado):**
     1. Instale um plugin de inserção de scripts como **Insert Headers and Footers** ou **WPCode**.
-    2. Vá em **Configurações → Insert Headers and Footers**.
+    2. Vá em **Configurações > Insert Headers and Footers**.
     3. Cole o script no campo **Scripts in Header**:
 
     ```html
@@ -62,7 +62,7 @@ Substitua `SUA_API_KEY_AQUI` pela API Key que você copiou nos [Primeiros Passos
     ```
     4. Salve as alterações.
 
-    **Opção 2 — Via `functions.php`:**
+    **Via `functions.php`:**
     ```php
     function userin_tracker_script() {
       echo '<script src="https://smarttrack.userin.ai/tracker.js" api-key="SUA_API_KEY_AQUI"></script>';
@@ -118,8 +118,8 @@ Substitua `SUA_API_KEY_AQUI` pela API Key que você copiou nos [Primeiros Passos
   </Accordion>
 
   <Accordion title="Shopify" icon="shopify">
-    1. No painel Shopify, vá em **Online Store → Themes**.
-    2. Clique em **Actions → Edit Code**.
+    1. No painel Shopify, vá em **Online Store > Themes**.
+    2. Clique em **Actions > Edit Code**.
     3. Abra o arquivo `theme.liquid`.
     4. Antes do fechamento `</head>`, adicione:
 
@@ -156,9 +156,9 @@ Substitua `SUA_API_KEY_AQUI` pela API Key que você copiou nos [Primeiros Passos
     </html>
     ```
 
-    <Info>
-      O tracker detecta automaticamente mudanças de rota em SPAs (Single Page Applications), capturando page views mesmo sem recarregamento de página.
-    </Info>
+    <div className="callout-blue">
+      O tracker detecta automaticamente mudanças de rota em SPAs (React, Vue, Angular), capturando page views mesmo sem recarregamento de página.
+    </div>
   </Accordion>
 
   <Accordion title="Google Tag Manager" icon="google">
@@ -175,24 +175,6 @@ Substitua `SUA_API_KEY_AQUI` pela API Key que você copiou nos [Primeiros Passos
     4. Publique o container.
   </Accordion>
 </AccordionGroup>
-
----
-
-## Opções avançadas do script
-
-### Ativar o Companion (IA)
-
-Para habilitar o assistente de IA conversacional junto com o tracker:
-
-```html
-<script
-  src="https://smarttrack.userin.ai/tracker.js"
-  api-key="SUA_API_KEY_AQUI"
-  buyer-agent="true"
-></script>
-```
-
-O atributo `buyer-agent="true"` ativa o Companion, que aparecerá como um chat flutuante no seu site.
 
 ---
 
@@ -215,17 +197,23 @@ Assim que o script carregar, o tracker automaticamente:
   </Step>
 </Steps>
 
-<Check>
+<div className="callout-blue">
   **Nenhuma configuração adicional é necessária** para a captura básica de dados. O tracker funciona imediatamente após a instalação.
-</Check>
+</div>
+
+<Tip>
+  **Teste rápido:** abra o console do navegador (`F12`) e digite `__SmartTrack`. Se o objeto aparecer com os métodos disponíveis, a instalação está correta. Se retornar `undefined`, revise se o script está carregando na página.
+</Tip>
+
+---
 
 ## Próximo passo
 
-O tracker já está capturando dados anônimos. Agora, aprenda a conectar esses dados a usuários reais.
+O tracker já está capturando dados anônimos. Agora, conecte esses dados a usuários reais do seu sistema.
 
 <Card
   title="Conectando Dados"
-  icon="arrow-right"
+  icon="plug"
   href="/onboarding/conectando-dados"
 >
   Identifique visitantes, capture formulários e envie eventos customizados.

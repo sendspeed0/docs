@@ -41,6 +41,17 @@
         ]
       },
       {
+        "tab": "Componentes",
+        "groups": [
+          {
+            "group": "Componentes",
+            "pages": [
+              "componentes/criando-componentes"
+            ]
+          }
+        ]
+      },
+      {
         "tab": "API Reference",
         "groups": [
           {

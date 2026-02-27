@@ -1,12 +1,10 @@
 ---
 title: "Conectando Dados"
-description: "Identifique visitantes, capture formulários e envie eventos customizados para enriquecer os perfis na UserIn."
+description: "Transforme visitantes anônimos em perfis completos. Identifique usuários, capture formulários e rastreie eventos do seu negócio."
 icon: "plug"
 ---
 
-## Por que conectar dados?
-
-O tracker captura dados comportamentais automaticamente, mas visitantes são **anônimos** por padrão. Ao conectar dados, você transforma visitantes anônimos em perfis completos com nome, email e contexto de negócio.
+O tracker já está capturando comportamento, mas visitantes são **anônimos** por padrão. Nesta etapa, você conecta esses dados a pessoas reais: quando um visitante faz login ou se cadastra, a UserIn unifica todo o histórico anônimo com o perfil identificado automaticamente.
 
 <CardGroup cols={3}>
   <Card title="Identificar" icon="user-check">
@@ -52,7 +50,7 @@ __SmartTrack.setExternalUserContext('id_do_usuario', {
   | `company` | string | Nome da empresa |
   | `role` | string | Cargo ou função |
 
-  <Tip>Você pode enviar **qualquer propriedade customizada** — elas serão salvas no perfil e podem ser usadas para segmentação.</Tip>
+  <Tip>Você pode enviar **qualquer propriedade customizada**. Elas serão salvas no perfil e podem ser usadas para segmentação.</Tip>
 </ParamField>
 
 ### Exemplos práticos
@@ -60,7 +58,6 @@ __SmartTrack.setExternalUserContext('id_do_usuario', {
 <CodeGroup>
 
 ```javascript Após login
-// Chamado após autenticação bem-sucedida
 function onLoginSuccess(user) {
   __SmartTrack.setExternalUserContext(user.id, {
     email: user.email,
@@ -72,7 +69,6 @@ function onLoginSuccess(user) {
 ```
 
 ```javascript Após cadastro
-// Chamado após registro de novo usuário
 function onSignupComplete(newUser) {
   __SmartTrack.setExternalUserContext(newUser.id, {
     email: newUser.email,
@@ -84,7 +80,6 @@ function onSignupComplete(newUser) {
 ```
 
 ```javascript E-commerce
-// Identificar comprador
 function onCheckout(customer) {
   __SmartTrack.setExternalUserContext(customer.id, {
     email: customer.email,
@@ -98,27 +93,29 @@ function onCheckout(customer) {
 
 </CodeGroup>
 
-<Warning>
-  Chame `setExternalUserContext` **uma vez** por sessão (após login/cadastro). Chamadas repetidas atualizam o perfil — não criam duplicatas.
-</Warning>
+<div className="callout-blue">
+  Chame `setExternalUserContext` **uma vez** por sessão (após login ou cadastro). Chamadas repetidas atualizam o perfil, não criam duplicatas.
+</div>
+
+<Tip>
+  **Quando identificar?** O melhor momento é logo após a autenticação. Se o usuário já está logado ao entrar no site (sessão persistente), chame o método no carregamento da página.
+</Tip>
 
 ---
 
 ## 2. Capturar formulários
 
-O tracker pode capturar dados de formulários automaticamente. Existem diferentes estratégias:
-
-### Captura automática (padrão)
-
-Por padrão, o tracker detecta e captura envios de formulários automaticamente. Nenhum código extra é necessário.
+O tracker captura envios de formulários automaticamente. Nenhum código extra é necessário para a captura padrão.
 
 ### Configurar estratégia de captura
 
+Se você precisa de controle sobre quais formulários são capturados:
+
 ```javascript
 __SmartTrack.forms({
-  strategy: 'auto',        // 'auto' | 'whitelist' | 'blacklist' | 'disabled'
-  trigger: 'submit',       // 'submit' | 'change' | 'blur'
-  excludeFields: [         // Campos que NUNCA serão capturados
+  strategy: 'auto',
+  trigger: 'submit',
+  excludeFields: [
     'password',
     'credit-card',
     'cvv',
@@ -146,9 +143,9 @@ __SmartTrack.forms({
 });
 ```
 
-<Info>
+<div className="callout-blue">
   **Privacidade primeiro:** campos sensíveis como `password`, `credit-card` e `cvv` são **excluídos automaticamente** por padrão, independente da estratégia escolhida.
-</Info>
+</div>
 
 ---
 
@@ -162,7 +159,7 @@ __SmartTrack.customEvent('nome_do_evento', {
 });
 ```
 
-### Exemplos por segmento
+### Exemplos por vertical
 
 <Tabs>
   <Tab title="E-commerce">
@@ -213,6 +210,28 @@ __SmartTrack.customEvent('nome_do_evento', {
     });
     ```
   </Tab>
+  <Tab title="Lead Generation">
+    ```javascript
+    // Lead qualificado
+    __SmartTrack.customEvent('lead_qualified', {
+      score: 85,
+      source: 'landing_page',
+      interest: 'plano_enterprise'
+    });
+
+    // Demo agendada
+    __SmartTrack.customEvent('demo_scheduled', {
+      date: '2026-03-15',
+      salesRep: 'joao@empresa.com'
+    });
+
+    // Proposta enviada
+    __SmartTrack.customEvent('proposal_sent', {
+      value: 4500.00,
+      plan: 'enterprise'
+    });
+    ```
+  </Tab>
   <Tab title="Conteúdo / Blog">
     ```javascript
     // Artigo lido
@@ -238,19 +257,27 @@ __SmartTrack.customEvent('nome_do_evento', {
 
 ---
 
-## 4. Configurar eventos avançados
+## 4. Eventos comportamentais avançados
 
 Além dos eventos padrão, você pode ativar rastreamento comportamental avançado:
 
 ```javascript
 __SmartTrack.events({
-  idle: true,           // Detecta quando o usuário fica inativo
-  rageClick: true,      // Detecta cliques frustrados (muitos cliques rápidos)
-  keyboardUsage: true,  // Padrões de uso do teclado
-  hoverFrequency: true, // Frequência de hover em elementos
-  clipboardUsage: true  // Uso de copy/paste
+  idle: true,
+  rageClick: true,
+  keyboardUsage: true,
+  hoverFrequency: true,
+  clipboardUsage: true
 });
 ```
+
+| Evento | O que detecta |
+|--------|---------------|
+| `idle` | Visitante ficou inativo na página |
+| `rageClick` | Cliques frustrados (muitos cliques rápidos no mesmo elemento) |
+| `keyboardUsage` | Padrões de uso do teclado |
+| `hoverFrequency` | Frequência de hover sobre elementos |
+| `clipboardUsage` | Uso de copiar/colar |
 
 <Tip>
   **Para ativar todos os eventos de uma vez:**
@@ -280,7 +307,7 @@ Com os dados conectados, verifique se tudo está funcionando corretamente.
 
 <Card
   title="Verificar Integração"
-  icon="arrow-right"
+  icon="circle-check"
   href="/onboarding/verificar-integracao"
 >
   Confirme que os dados estão chegando e veja seus primeiros visitantes na plataforma.
