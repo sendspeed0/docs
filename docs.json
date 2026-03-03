@@ -37,12 +37,7 @@
               "plataforma/audiencia",
               "plataforma/personalizacao-liquid"
             ]
-          }
-        ]
-      },
-      {
-        "tab": "Componentes",
-        "groups": [
+          },
           {
             "group": "Componentes",
             "pages": [
