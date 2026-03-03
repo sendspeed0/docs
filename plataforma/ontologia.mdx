@@ -131,10 +131,10 @@ Dados sobre transações e gastos do visitante.
 
 | Campo | Descrição | Tipo | Exemplo |
 |-------|-----------|------|---------|
-| **Total Depositado** | Soma de todos os valores | Número | R$ 2.500 |
+| **Total Depositado** | Soma de todos os valores | Número | R\$ 2.500 |
 | **Qtd. de Depósitos** | Quantas transações realizou | Número | 8 |
-| **Ticket Médio** | Valor médio por transação | Número | R$ 312,50 |
-| **Valor do 1o Depósito** | Quanto pagou na primeira vez | Número | R$ 50 |
+| **Ticket Médio** | Valor médio por transação | Número | R\$ 312,50 |
+| **Valor do 1o Depósito** | Quanto pagou na primeira vez | Número | R\$ 50 |
 | **Dias Desde Último Depósito** | Há quanto tempo não compra | Número | 14 |
 | **Tier de Depósitos** | Classificação por faixa de valor | Lista | None, Low, Medium, High, Whale |
 | **Tendência** | Os gastos estão subindo ou caindo? | Lista | Aumentando, Estável, Diminuindo |
@@ -200,9 +200,9 @@ Monitoramento de saldo durante a sessão do visitante. Disponível para categori
 
 | Campo | Descrição | Tipo | Exemplo |
 |-------|-----------|------|---------|
-| **Saldo Atual** | Saldo neste momento | Número | R$ 200 |
-| **Saldo Início Sessão** | Saldo quando entrou | Número | R$ 500 |
-| **Ganhou/Perdeu (R$)** | Diferença na sessão | Número | -R$ 300 |
+| **Saldo Atual** | Saldo neste momento | Número | R\$ 200 |
+| **Saldo Início Sessão** | Saldo quando entrou | Número | R\$ 500 |
+| **Ganhou/Perdeu (R\$)** | Diferença na sessão | Número | -R\$ 300 |
 | **Ganhou/Perdeu (%)** | Variação percentual | Número | -60% |
 
 <div className="callout-blue">
@@ -286,11 +286,11 @@ Sinais são **derivações** dos dados brutos. Eles respondem perguntas como "es
 
     | Tier | Faixa de Valor | Significado |
     |------|---------------|-------------|
-    | **None** | R$ 0 | Nunca comprou |
-    | **Low** | R$ 1 - R$ 100 | Comprador inicial |
-    | **Medium** | R$ 100 - R$ 500 | Comprador moderado |
-    | **High** | R$ 500 - R$ 2.000 | Comprador de alto valor |
-    | **Whale** | R$ 2.000+ | Comprador premium |
+    | **None** | R\$ 0 | Nunca comprou |
+    | **Low** | R\$ 1 - R\$ 100 | Comprador inicial |
+    | **Medium** | R\$ 100 - R\$ 500 | Comprador moderado |
+    | **High** | R\$ 500 - R\$ 2.000 | Comprador de alto valor |
+    | **Whale** | R\$ 2.000+ | Comprador premium |
 
     **Atualizado:** em tempo real, a cada nova transação.
 
@@ -333,7 +333,7 @@ Sinais são **derivações** dos dados brutos. Eles respondem perguntas como "es
   <Accordion title="Variação de Saldo na Sessão" icon="arrow-trend-down">
     Para plataformas que monitoram saldo em tempo real, acompanha quanto o visitante ganhou ou perdeu na sessão atual:
 
-    - **Valor (R$):** diferença entre saldo atual e inicial
+    - **Valor (R\$):** diferença entre saldo atual e inicial
     - **Percentual (%):** variação relativa
 
     **Atualizado:** em tempo real durante a sessão.
@@ -522,13 +522,13 @@ Combinações comuns de campos, sinais e outputs em regras e jornadas:
 
 <AccordionGroup>
   <Accordion title="Identificar clientes VIP" icon="crown">
-    **Condição:** Total Depositado *maior que* R$ 5.000 **E** Tier *igual a* Whale
+    **Condição:** Total Depositado *maior que* R\$ 5.000 **E** Tier *igual a* Whale
 
     **Ação:** Adicionar segmento "VIP" e exibir modal de programa de fidelidade.
   </Accordion>
 
   <Accordion title="Reativar clientes inativos" icon="rotate">
-    **Condição:** Dias Desde Último Depósito *maior que* 30 **E** Total Depositado *maior que* R$ 100
+    **Condição:** Dias Desde Último Depósito *maior que* 30 **E** Total Depositado *maior que* R\$ 100
 
     **Ação:** Enviar SMS com oferta especial de retorno.
   </Accordion>

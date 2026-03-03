@@ -26,7 +26,7 @@ Variáveis permitem que você insira **dados reais do visitante** diretamente no
     "Olá! Aproveite nosso bônus especial."
   </Card>
   <Card title="Com personalização" icon="check">
-    "Olá **João**! Você já depositou **R$ 1.250** conosco. Aproveite um bônus de **20%** no próximo depósito."
+    "Olá **João**! Você já depositou **R\$ 1.250** conosco. Aproveite um bônus de **20%** no próximo depósito."
   </Card>
 </CardGroup>
 
@@ -38,12 +38,12 @@ Você escreve variáveis no formato `{{campo}}` dentro do seu texto. Quando o co
 Olá {{contact.firstName}}! 
 
 Seu score de intenção é {{intention.score}} e você já fez 
-{{deposits.count}} depósitos no total de R$ {{deposits.total}}.
+{{deposits.count}} depósitos no total de R\$ {{deposits.total}}.
 ```
 
 Resultado para o visitante João:
 
-> Olá **João**! Seu score de intenção é **78** e você já fez **5** depósitos no total de R$ **1.250**.
+> Olá **João**! Seu score de intenção é **78** e você já fez **5** depósitos no total de R\$ **1.250**.
 
 ## Variáveis com valor padrão
 
@@ -130,7 +130,7 @@ Variáveis funcionam em todos os canais da UserIn:
   <Accordion title="Smart Blocks" icon="puzzle-piece">
     Personalize blocos embutidos na página. Ideal para banners e CTAs que mudam de acordo com o visitante.
 
-    Exemplo: `Faltam R$ {{deposits.ftd.amount:50}} para desbloquear o nível Gold!`
+    Exemplo: `Faltam R\$ {{deposits.ftd.amount:50}} para desbloquear o nível Gold!`
   </Accordion>
 
   <Accordion title="Emails" icon="envelope">
@@ -142,7 +142,7 @@ Variáveis funcionam em todos os canais da UserIn:
   <Accordion title="SMS" icon="message">
     Personalize a mensagem de texto.
 
-    Exemplo: `Oi {{contact.firstName:amigo}}! Deposite R$50 e ganhe 20% de bônus. Seu tier atual: {{deposits.tier}}`
+    Exemplo: `Oi {{contact.firstName:amigo}}! Deposite R\$50 e ganhe 20% de bônus. Seu tier atual: {{deposits.tier}}`
   </Accordion>
 </AccordionGroup>
 
