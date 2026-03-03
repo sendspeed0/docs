@@ -4,13 +4,24 @@ description: "Referência completa da API JavaScript do tracker UserIn disponív
 icon: "terminal"
 ---
 
+**Nesta página:**
+
+- [Identificação](#identificação)
+- [Eventos](#eventos)
+- [Formulários](#formulários)
+- [Getters](#getters)
+- [Insights AI](#insights-ai)
+- [Dados enviados automaticamente](#dados-enviados-automaticamente)
+
+---
+
 ## Visão geral
 
 Após instalar o tracker no seu site, o objeto global `__SmartTrack` fica disponível em `window.__SmartTrack`. Através dele, você pode identificar usuários, enviar eventos e configurar o comportamento do tracker.
 
-<Info>
+<div className="callout-blue">
   O tracker carrega de forma assíncrona. Se precisar garantir que ele está disponível antes de chamar métodos, verifique `typeof __SmartTrack !== 'undefined'`.
-</Info>
+</div>
 
 ---
 
@@ -32,6 +43,10 @@ __SmartTrack.setExternalUserContext('user_123', {
 |-----------|------|:-----------:|-----------|
 | `userId` | `string` | Sim | ID único do usuário no seu sistema |
 | `properties` | `object` | Não | Propriedades do perfil (email, name, etc.) |
+
+<Tip>
+  Chame `setExternalUserContext` o mais cedo possível após o login do usuário. Isso vincula o perfil anônimo (criado pelo tracker) ao ID real, unificando todo o histórico de navegação.
+</Tip>
 
 ---
 
@@ -144,7 +159,7 @@ const companyId = __SmartTrack.getCompanyId();
 
 ---
 
-## Companion (IA)
+## Insights AI
 
 ### Ativação via script
 

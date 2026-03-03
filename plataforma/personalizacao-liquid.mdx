@@ -4,6 +4,19 @@ description: "Use variáveis dinâmicas para personalizar Smart Modals, Smart Bl
 icon: "wand-magic-sparkles"
 ---
 
+**Nesta página:**
+
+- [O que são variáveis de personalização?](#o-que-são-variáveis-de-personalização)
+- [Como funciona](#como-funciona)
+- [Variáveis com valor padrão](#variáveis-com-valor-padrão)
+- [Variáveis disponíveis](#variáveis-disponíveis)
+- [Onde usar variáveis](#onde-usar-variáveis)
+- [O Picker de Variáveis](#o-picker-de-variáveis)
+- [Configurar variáveis disponíveis](#configurar-variáveis-disponíveis)
+- [Boas práticas](#boas-práticas)
+
+---
+
 ## O que são variáveis de personalização?
 
 Variáveis permitem que você insira **dados reais do visitante** diretamente no conteúdo dos seus modais, blocos, emails e SMS. Em vez de uma mensagem genérica, cada pessoa vê uma versão personalizada.
@@ -43,9 +56,9 @@ Olá {{contact.firstName:visitante}}!
 - Se o nome existe: "Olá **João**!"
 - Se o nome não existe: "Olá **visitante**!"
 
-<Info>
+<div className="callout-blue">
   O formato é `{{campo:valor_padrao}}`. Tudo depois dos dois pontos é o texto que aparece quando o campo está vazio.
-</Info>
+</div>
 
 ## Variáveis disponíveis
 
@@ -89,7 +102,7 @@ Olá {{contact.firstName:visitante}}!
 | `{{externalId}}` | ID do usuário | user_12345 |
 | `{{stage}}` | Estágio | ftd |
 
-### Jogos (iGaming)
+### Jogos
 
 | Variável | Descrição | Exemplo |
 |----------|-----------|---------|
@@ -97,7 +110,7 @@ Olá {{contact.firstName:visitante}}!
 | `{{game.category}}` | Categoria | slots |
 | `{{game.provider}}` | Provedor | PG Soft |
 
-### Saldo (iGaming)
+### Saldo
 
 | Variável | Descrição | Exemplo |
 |----------|-----------|---------|
@@ -157,8 +170,8 @@ Para facilitar, a UserIn oferece um **seletor de variáveis** (botão `{ }`) nos
 Você pode controlar quais campos aparecem no picker de variáveis:
 
 <Steps>
-  <Step title="Acesse Objetos no menu lateral">
-    Navegue até a seção de Ontologia.
+  <Step title="Acesse Estrutura de automações no menu lateral">
+    Navegue até o Painel de Ontologia.
   </Step>
   <Step title="Expanda um campo">
     Clique em qualquer campo para ver seus detalhes.
@@ -168,9 +181,9 @@ Você pode controlar quais campos aparecem no picker de variáveis:
   </Step>
 </Steps>
 
-<Info>
+<div className="callout-blue">
   Por padrão, os campos mais comuns já vêm ativados: nome, email, telefone, total de depósitos, tier, score de intenção, etc.
-</Info>
+</div>
 
 ## Boas práticas
 
@@ -199,9 +212,9 @@ Você pode controlar quais campos aparecem no picker de variáveis:
 
 <CardGroup cols={2}>
   <Card title="Ontologia de Dados" icon="arrow-left" href="/plataforma/ontologia">
-    Entenda como todos os dados são organizados na plataforma.
+    Entenda como todos os dados são organizados na plataforma, incluindo a referência completa de campos.
   </Card>
-  <Card title="Campos e Atributos" icon="arrow-left" href="/plataforma/campos-e-atributos">
-    Veja a lista completa de campos disponíveis.
+  <Card title="Jornadas" icon="route" href="/plataforma/jornadas">
+    Crie automações visuais usando variáveis e campos no Construtor de Fluxos.
   </Card>
 </CardGroup>
