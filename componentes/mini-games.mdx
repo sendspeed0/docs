@@ -1,0 +1,297 @@
+---
+title: "Mini Games"
+description: "Engaje visitantes com mecânicas de gamificação interativas: roleta, raspadinha, caixa misteriosa, slot machine, prize drop e flip card."
+icon: "dice"
+---
+
+**Nesta página:**
+
+- [O que são Mini Games](#o-que-são-mini-games)
+- [Tipos de jogo](#tipos-de-jogo)
+- [Criando um Mini Game](#criando-um-mini-game)
+- [Configurando prêmios](#configurando-prêmios)
+- [Personalização visual](#personalização-visual)
+- [Acompanhando resultados](#acompanhando-resultados)
+- [Boas práticas](#boas-práticas)
+
+---
+
+## O que são Mini Games
+
+<Frame caption="Mini Games: mecânicas interativas de gamificação como a Roleta de Prêmios">
+  <img src="/images/plataforma/mini-game-ilustracao.png" alt="Ilustração de uma roleta de prêmios como exemplo de Mini Game" style={{ maxWidth: '50%', margin: '0 auto' }} />
+</Frame>
+
+Mini Games são **mecânicas interativas de gamificação** que transformam a experiência do visitante em algo divertido e recompensador. O visitante participa de um jogo rápido e recebe uma oferta ou prêmio com base em probabilidades configuráveis.
+
+| Aspecto | Detalhe |
+|---------|---------|
+| **Formato** | Overlay fullscreen com mecânica interativa |
+| **Jogos disponíveis** | 6 tipos (roleta, raspadinha, caixa misteriosa, slot machine, prize drop, flip card) |
+| **Prêmios** | Configuráveis com probabilidade, cor e ação de resgate |
+| **Efeitos** | Confetti, moedas e banner de vitória |
+| **Acionamento** | Via Construtor de Fluxos (ação "Exibir Minigame" em jornadas InSite) |
+
+<div className="callout-blue">
+  Mini Games são acionados por **jornadas InSite** no Construtor de Fluxos. Use o bloco de ação **Exibir Minigame** para selecionar qual jogo será apresentado ao visitante.
+</div>
+
+---
+
+## Tipos de jogo
+
+A plataforma oferece seis mecânicas prontas. Cada uma tem configurações específicas que ajustam a experiência visual e a interação.
+
+<AccordionGroup>
+  <Accordion title="Roleta (Roda da Fortuna)" icon="circle-notch" defaultOpen>
+    Roda giratória dividida em setores com prêmios. O visitante clica para girar e a roda para em um setor aleatório (controlado por probabilidade).
+
+    | Configuração | Descrição |
+    |--------------|-----------|
+    | **Duração do giro** | Tempo da animação de rotação |
+    | **Rotações** | Quantidade de voltas completas antes de parar |
+    | **Layout** | Roda centralizada, à esquerda ou à direita |
+    | **Texto nas fatias** | Tamanho, peso, sombra e curvatura |
+    | **Assets** | Imagens da roda, seta, anel, fundo e centro (opcionais) |
+  </Accordion>
+
+  <Accordion title="Raspadinha" icon="hand-pointer">
+    Área coberta que o visitante "raspa" com o mouse ou dedo para revelar o prêmio. Ao atingir o percentual de área descoberta, o prêmio é revelado automaticamente.
+
+    | Configuração | Descrição |
+    |--------------|-----------|
+    | **Threshold** | Percentual de área raspada para revelar (%) |
+    | **Raio de raspagem** | Tamanho do pincel |
+    | **Quantidade de cards** | 4, 6, 9 ou 12 áreas |
+    | **Cor / imagem de cobertura** | Visual da camada que cobre o prêmio |
+    | **Layout** | Grid, horizontal ou Smartico |
+  </Accordion>
+
+  <Accordion title="Caixa Misteriosa" icon="box-open">
+    O visitante escolhe uma entre várias caixas. Uma delas contém o prêmio. Animação de abertura ao selecionar.
+
+    | Configuração | Descrição |
+    |--------------|-----------|
+    | **Quantidade de caixas** | Padrão: 3 |
+    | **Estilo** | Clássico, moderno, natal ou aniversário |
+    | **Animação** | Shake, bounce ou glow |
+    | **Delay de revelação** | Tempo entre o clique e a abertura |
+  </Accordion>
+
+  <Accordion title="Slot Machine" icon="slot-machine">
+    Três rolos giratórios com símbolos. O visitante puxa a alavanca e os rolos param sequencialmente, revelando a combinação.
+
+    | Configuração | Descrição |
+    |--------------|-----------|
+    | **Rolos** | 3 colunas |
+    | **Símbolos por rolo** | 12 posições |
+    | **Duração do giro** | Tempo de rotação |
+    | **Delay entre rolos** | Intervalo entre a parada de cada rolo |
+    | **Símbolos** | Emojis ou imagens dos prêmios |
+  </Accordion>
+
+  <Accordion title="Prize Drop (Plinko)" icon="circle-down">
+    Uma bola cai por uma grade de pinos e termina em um dos slots na base, cada um com um prêmio diferente.
+
+    | Configuração | Descrição |
+    |--------------|-----------|
+    | **Linhas de pinos** | Padrão: 8 |
+    | **Cor da bola** | Personalização visual |
+    | **Cor dos pinos** | Personalização visual |
+    | **Duração da queda** | Tempo da animação |
+  </Accordion>
+
+  <Accordion title="Flip Card (Vira a Carta)" icon="clone">
+    Cartas viradas que o visitante seleciona. Ao clicar, a carta vira com animação e revela o prêmio.
+
+    | Configuração | Descrição |
+    |--------------|-----------|
+    | **Quantidade de cartas** | Padrão: 5 |
+    | **Estilo** | Clássico, moderno, mágico ou casino |
+    | **Layout** | Grid ou linha |
+    | **Duração do flip** | Tempo da animação de virar |
+    | **Verso** | Emoji ou imagem customizada |
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Criando um Mini Game
+
+<Steps>
+  <Step title="Escolha o tipo de jogo">
+    No menu lateral, acesse **Componentes → Mini Games**. A tela exibe os 6 tipos disponíveis para seleção direta. Clique no tipo desejado para iniciar a criação.
+
+    <Frame caption="Selecione o tipo de jogo diretamente ao criar um novo Mini Game">
+      <img src="/images/plataforma/mini-game-selecao-tipo.png" alt="Tela de seleção de tipo de Mini Game com 6 opções: Roleta, Raspadinha, Caixa Misteriosa, Slot Machine, Prize Drop e Vira a Carta" />
+    </Frame>
+  </Step>
+
+  <Step title="Configure na aba Geral">
+    Defina nome interno, nome do jogo (visível ao visitante), descrição e os textos de interface: título, subtítulo, texto do botão de jogar, mensagem de vitória, texto do botão de resgate e termos (opcional).
+  </Step>
+
+  <Step title="Monte os prêmios na aba Prêmios">
+    Adicione as ofertas com nome, probabilidade, cor e ação de resgate. As probabilidades devem somar 100%.
+  </Step>
+
+  <Step title="Personalize na aba Visual">
+    Ajuste cores (primária, secundária, fundo), fonte, estilo do botão e assets específicos do tipo de jogo escolhido.
+  </Step>
+
+  <Step title="Ajuste na aba Config">
+    Configure parâmetros da mecânica (duração, efeitos, som), limite de jogadas por visitante, cooldown e primeira vitória garantida.
+  </Step>
+
+  <Step title="Salve">
+    Salve o mini game. Ele ficará disponível para seleção no Construtor de Fluxos via ação **Exibir Minigame**.
+  </Step>
+</Steps>
+
+<Tip>
+  Use os botões **Preview Desktop** e **Preview Mobile** para testar a mecânica completa antes de ativar. O preview executa o jogo com os dados do formulário.
+</Tip>
+
+---
+
+## Configurando prêmios
+
+Cada prêmio (oferta) é configurado individualmente na aba **Prêmios**.
+
+| Campo | Descrição |
+|-------|-----------|
+| **Nome** | Texto que o visitante vê ao ganhar (ex: "20% de desconto") |
+| **SyncTag** | Identificador para integração com sistemas externos |
+| **Probabilidade** | Chance de sorteio (todas devem somar 100%) |
+| **Cor** | Cor da fatia/card associado ao prêmio |
+| **Vencedor** | Se é um prêmio real ou um "tente novamente" |
+
+### Ação de resgate
+
+Ao ganhar, o visitante pode ser direcionado para uma ação:
+
+| Tipo | Comportamento |
+|------|---------------|
+| **Redirect** | Redireciona para uma URL |
+| **Coupon** | Exibe um código de cupom |
+| **Bonus** | Aplica um bônus na conta |
+| **Click Element** | Clica em um elemento da página (via seletor CSS) |
+| **Custom Script** | Executa JavaScript customizado |
+| **Nenhum** | Apenas exibe a mensagem de vitória |
+
+### Primeira vitória garantida
+
+Ativando esta opção, o primeiro jogo de cada visitante é sempre uma vitória. Isso aumenta a percepção de valor e o engajamento com o resgate. As probabilidades normais se aplicam a partir da segunda jogada.
+
+<div className="callout-blue">
+  As probabilidades precisam somar exatamente 100%. O editor valida isso automaticamente e impede o salvamento enquanto a soma estiver incorreta.
+</div>
+
+---
+
+## Personalização visual
+
+### Tema
+
+| Campo | Descrição |
+|-------|-----------|
+| **Cor primária** | Cor principal (destaques, botões) |
+| **Cor secundária** | Cor de apoio (bordas, acentos) |
+| **Cor de fundo** | Fundo do overlay do jogo |
+| **Fonte** | Família tipográfica |
+| **Opacidade do overlay** | Transparência do fundo (0 a 1) |
+
+### Botão de jogar
+
+Cores configuráveis para fundo, texto e borda do botão principal.
+
+### Efeitos de vitória
+
+| Efeito | Descrição |
+|--------|-----------|
+| **Confetti** | Chuva de confetes ao ganhar |
+| **Moedas** | Animação de moedas caindo |
+| **Banner** | Faixa de celebração |
+| **Som** | Efeito sonoro de vitória (habilitável) |
+
+### Efeito de entrada
+
+Mesmos efeitos disponíveis nos modais (fade, scale, slide, bounce, zoom) com controle de duração, intensidade e delay.
+
+---
+
+## Acompanhando resultados
+
+Acesse a análise clicando em **Ver Analytics** na lista de mini games.
+
+### KPIs
+
+| Métrica | O que mede |
+|---------|------------|
+| **Impressões** | Vezes que o jogo foi exibido |
+| **Jogadas** | Vezes que o visitante jogou |
+| **Vitórias** | Vezes que o visitante ganhou |
+| **Resgates** | Cliques no botão de resgate |
+| **Visitantes únicos** | Visitantes distintos |
+| **Taxa de jogo** | Jogadas / Impressões |
+| **Taxa de vitória** | Vitórias / Jogadas |
+| **Taxa de resgate** | Resgates / Vitórias |
+
+### Análises disponíveis
+
+| Análise | Conteúdo |
+|---------|----------|
+| **Eventos por dia** | Gráfico de área com impressões, jogadas, vitórias e resgates (30 dias) |
+| **Por prêmio** | Distribuição de vitórias e resgates por oferta (pizza + barras + tabela) |
+| **Timeline** | Últimos 50 eventos com tipo, prêmio, dispositivo e timestamp |
+
+<Tip>
+  A **taxa de resgate** (resgates / vitórias) é a métrica mais reveladora. Se visitantes ganham mas não resgatam, o prêmio pode não ser atrativo o suficiente ou o processo de resgate tem atrito.
+</Tip>
+
+---
+
+## Boas práticas
+
+<AccordionGroup>
+  <Accordion title="Ofereça prêmios relevantes" icon="gift">
+    Prêmios genéricos geram pouco engajamento. Use dados da audiência para definir ofertas alinhadas ao perfil do visitante. Um desconto no produto que ele está visualizando vale mais que um cupom genérico.
+  </Accordion>
+
+  <Accordion title="Ative a primeira vitória garantida" icon="trophy">
+    A experiência de ganhar na primeira jogada cria um vínculo positivo com a marca. A taxa de resgate de primeiras vitórias é significativamente maior do que a de vitórias subsequentes.
+  </Accordion>
+
+  <Accordion title="Limite jogadas por visitante" icon="clock">
+    Mini games perdem o efeito se o visitante pode jogar indefinidamente. Configure um máximo de jogadas (1-3 por dia) e um cooldown entre sessões para manter a percepção de exclusividade.
+  </Accordion>
+
+  <Accordion title="Escolha o tipo de jogo certo para o contexto" icon="dice">
+    Roletas e slot machines funcionam bem para ofertas de desconto. Raspadinhas e flip cards são eficazes para revelação de códigos. Caixas misteriosas e prize drop criam suspense para prêmios de alto valor.
+  </Accordion>
+
+  <Accordion title="Monitore a taxa de resgate, não apenas as jogadas" icon="chart-simple">
+    Muitas jogadas com poucos resgates indicam que a mecânica atrai, mas a oferta não converte. Ajuste os prêmios ou simplifique o processo de resgate (menos cliques entre vitória e uso do prêmio).
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Próximos passos
+
+<CardGroup cols={2}>
+  <Card
+    title="Modais"
+    icon="window-maximize"
+    href="/componentes/modais"
+  >
+    Configure janelas sobrepostas com gatilhos inteligentes.
+  </Card>
+  <Card
+    title="Smart Blocks"
+    icon="puzzle-piece"
+    href="/componentes/smart-blocks"
+  >
+    Embutir blocos personalizados diretamente na estrutura da página.
+  </Card>
+</CardGroup>

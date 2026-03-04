@@ -34,14 +34,20 @@
             "pages": [
               "plataforma/ontologia",
               "plataforma/jornadas",
+              "plataforma/regras",
               "plataforma/audiencia",
+              "plataforma/validador-premiacao",
               "plataforma/personalizacao-liquid"
             ]
           },
           {
             "group": "Componentes",
             "pages": [
-              "componentes/criando-componentes"
+              "componentes/criando-componentes",
+              "componentes/cards",
+              "componentes/modais",
+              "componentes/smart-blocks",
+              "componentes/mini-games"
             ]
           }
         ]

@@ -1,0 +1,236 @@
+---
+title: "Smart Blocks"
+description: "Injete blocos de conteúdo personalizado diretamente na estrutura da página, integrados ao layout existente do site."
+icon: "puzzle-piece"
+---
+
+**Nesta página:**
+
+- [O que são Smart Blocks](#o-que-são-smart-blocks)
+- [Tipos de conteúdo](#tipos-de-conteúdo)
+- [Criando um Smart Block](#criando-um-smart-block)
+- [Seletor de elemento](#seletor-de-elemento)
+- [Estilo e animação](#estilo-e-animação)
+- [Acompanhando resultados](#acompanhando-resultados)
+- [Smart Blocks vs. Modais](#smart-blocks-vs-modais)
+- [Boas práticas](#boas-práticas)
+
+---
+
+## O que são Smart Blocks
+
+<Frame caption="Smart Blocks são injetados diretamente na estrutura da página, integrados ao layout existente">
+  <img src="/images/plataforma/smart-block-ilustracao.png" alt="Ilustração de um Smart Block embutido no layout de uma página" />
+</Frame>
+
+Smart Blocks são **blocos de conteúdo injetados diretamente na estrutura da página**. Diferente de modais (que aparecem sobre o conteúdo) e cards (que flutuam na tela), smart blocks se integram ao layout existente, ocupando um espaço dentro de um elemento HTML do site.
+
+O visitante vê conteúdo personalizado sem perceber que é um elemento dinâmico. Isso torna smart blocks a opção mais discreta e nativa entre os componentes.
+
+| Aspecto | Detalhe |
+|---------|---------|
+| **Posicionamento** | Dentro de um elemento da página (via seletor CSS, ID, classe ou XPath) |
+| **Inserção** | Substituir, inserir antes, inserir depois, no início ou no final do elemento |
+| **Conteúdo** | HTML customizado, imagem ou conteúdo personalizado dinâmico |
+| **Prioridade** | -100 a 100 (resolve conflitos quando múltiplos blocos competem pelo mesmo espaço) |
+| **Acionamento** | Via Construtor de Fluxos (ação "Personalizar Site" em jornadas InSite) |
+
+<div className="callout-blue">
+  Smart Blocks são acionados por **jornadas InSite** no Construtor de Fluxos. Use o bloco de ação **Personalizar Site** para selecionar o smart block e configurar onde ele será injetado na página.
+</div>
+
+---
+
+## Tipos de conteúdo
+
+<Tabs>
+  <Tab title="HTML">
+    Conteúdo HTML customizado com suporte a CSS e **variáveis Liquid**. Oferece controle total sobre o visual do bloco.
+
+    A plataforma inclui um **gerador com IA** que cria o HTML a partir de uma descrição, com opções de estilo (moderno, minimal, bold, elegante) e esquema de cores (dark, light, marca).
+
+    ```html
+    <div style="background: #f8f9fa; padding: 24px; border-radius: 12px; text-align: center;">
+      <h3>Recomendado para você, {{contact.firstName:visitante}}</h3>
+      <p>Com base no seu histórico, separamos ofertas especiais.</p>
+      <a href="/ofertas" style="background: #0020E7; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none;">
+        Ver ofertas
+      </a>
+    </div>
+    ```
+  </Tab>
+
+  <Tab title="Imagem">
+    Uma imagem estática com link opcional. Configurações disponíveis:
+
+    | Campo | Descrição |
+    |-------|-----------|
+    | **URL / Upload** | Imagem por URL ou upload direto |
+    | **Alt text** | Texto alternativo para acessibilidade |
+    | **Dimensões** | Largura e altura (0 = automático) |
+    | **Link** | URL de destino ao clicar na imagem |
+    | **Ajuste** | Contain, cover ou fill |
+  </Tab>
+
+  <Tab title="Personalização">
+    Conteúdo dinâmico gerado automaticamente com base no perfil do visitante. Ideal para recomendações e seções que mudam por segmento.
+
+    | Configuração | Descrição |
+    |--------------|-----------|
+    | **Tipo** | Recomendados, mais acessados, acessados recentemente, em alta, novos, promoções ou customizado |
+    | **Layout** | Carrossel, grid, lista ou item único |
+    | **Itens por linha** | Quantidade de itens exibidos por linha |
+    | **Máximo de itens** | Limite total de itens exibidos |
+    | **Elementos visíveis** | Título, descrição e botão de ação (toggles individuais) |
+  </Tab>
+</Tabs>
+
+---
+
+## Criando um Smart Block
+
+<Steps>
+  <Step title="Acesse a criação">
+    No menu lateral, acesse **Componentes → Smart Blocks**. Na tela "Meus Smart Blocks", clique em **Criar um Smart Block**. O editor abre com o painel de configuração à esquerda e preview à direita.
+  </Step>
+
+  <Step title="Preencha as informações básicas">
+    Defina **nome** (obrigatório), **descrição**, **tags** para organização e **prioridade** (-100 a 100) para resolver conflitos com outros blocos.
+  </Step>
+
+  <Step title="Escolha o tipo e configure o conteúdo">
+    Selecione entre HTML, Imagem ou Personalização e monte o conteúdo conforme o tipo escolhido. Para HTML, você pode usar o gerador com IA ou escrever manualmente.
+  </Step>
+
+  <Step title="Configure estilo e animação">
+    Ajuste CSS customizado, classes extras, border-radius e efeito de entrada (opcional).
+  </Step>
+
+  <Step title="Salve">
+    **Salvar Rascunho** ou **Salvar e Ativar**. Blocos ativos ficam disponíveis para uso no Construtor de Fluxos.
+  </Step>
+</Steps>
+
+---
+
+## Seletor de elemento
+
+O seletor define **onde** na página o smart block será injetado. Você pode configurá-lo de duas formas: pelo **seletor visual** ou **manualmente**.
+
+### Seletor visual
+
+A plataforma abre o site em uma janela auxiliar. Você navega até a página desejada e clica no elemento onde o bloco deve aparecer. O seletor CSS é capturado automaticamente.
+
+### Configuração manual
+
+Defina o seletor diretamente no Construtor de Fluxos, ao vincular o smart block a uma jornada:
+
+| Campo | Descrição | Exemplo |
+|-------|-----------|---------|
+| **Tipo de seletor** | ID, classe, atributo, CSS ou XPath | CSS |
+| **Valor** | O seletor em si | `.hero-banner` |
+| **Posição de inserção** | Como o bloco é inserido no elemento | Substituir, antes, depois, início ou final |
+
+### Posições de inserção
+
+| Posição | Comportamento |
+|---------|---------------|
+| **Substituir** | Remove o conteúdo do elemento e insere o bloco |
+| **Início** | Insere o bloco como primeiro filho do elemento |
+| **Final** | Insere o bloco como último filho do elemento |
+| **Antes** | Insere o bloco imediatamente antes do elemento |
+| **Depois** | Insere o bloco imediatamente depois do elemento |
+
+<Tip>
+  Para SPAs (Single Page Applications), ative a opção **Aguardar elemento** na configuração. Isso garante que o tracker espere o elemento existir no DOM antes de injetar o bloco.
+</Tip>
+
+---
+
+## Estilo e animação
+
+### CSS customizado
+
+Você pode aplicar CSS diretamente no container do smart block e adicionar classes extras para integração com o design system do site.
+
+### Efeito de entrada
+
+Smart blocks suportam os mesmos efeitos de entrada dos modais (fade, scale, slide, bounce, zoom) com controle de duração, intensidade e delay. Porém, como blocos se integram ao layout, efeitos sutis (fade com duração curta) geralmente funcionam melhor que animações chamativas.
+
+---
+
+## Acompanhando resultados
+
+Acesse a análise clicando em **Ver Analytics** na lista de smart blocks.
+
+### KPIs
+
+| Métrica | O que mede |
+|---------|------------|
+| **Impressões** | Vezes que o bloco foi renderizado na página |
+| **Cliques** | Interações com links ou CTAs dentro do bloco |
+| **CTR** | Taxa de clique |
+| **Visitantes únicos** | Visitantes distintos que viram o bloco |
+
+### Análises disponíveis
+
+| Aba | Conteúdo |
+|-----|----------|
+| **Visão geral** | Eventos por dia (gráfico de área, 30 dias) e breakdown por tipo de evento |
+| **Por dispositivo** | Distribuição entre desktop, tablet e mobile |
+| **Itens clicados** | Ranking dos itens mais clicados (para blocos de personalização) |
+
+---
+
+## Smart Blocks vs. Modais
+
+| Critério | Smart Blocks | Modais |
+|----------|--------------|--------|
+| **Visibilidade** | Integrado ao layout, discreto | Overlay, alta visibilidade |
+| **Posição** | Dentro de um elemento da página | Centralizado sobre a página |
+| **Interrupção** | Nenhuma (parte do conteúdo) | Total (bloqueia a página) |
+| **Uso ideal** | Banners, recomendações, CTAs inline | Ofertas urgentes, captação de leads |
+| **Ação no Construtor de Fluxos** | Personalizar Site | Exibir Modal |
+
+---
+
+## Boas práticas
+
+<AccordionGroup>
+  <Accordion title="Use seletores estáveis" icon="crosshairs">
+    Evite seletores que dependem de classes geradas dinamicamente (como `css-1a2b3c`). Prefira IDs, data-attributes ou classes semânticas do site. Seletores frágeis quebram quando o site é atualizado.
+  </Accordion>
+
+  <Accordion title="Teste em páginas reais antes de ativar" icon="flask-vial">
+    O preview no editor mostra o conteúdo isolado. Sempre verifique como o bloco se comporta dentro do layout real da página, especialmente em diferentes resoluções e dispositivos.
+  </Accordion>
+
+  <Accordion title="Aproveite o gerador com IA para prototipar" icon="wand-magic-sparkles">
+    Use o gerador com IA para criar um primeiro rascunho rápido do HTML, depois refine manualmente. Isso acelera a criação sem sacrificar a qualidade do resultado final.
+  </Accordion>
+
+  <Accordion title="Defina prioridades para evitar conflitos" icon="sort">
+    Se múltiplos smart blocks podem competir pelo mesmo espaço na página, use o campo de prioridade para definir qual tem precedência. Blocos com prioridade mais alta vencem.
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Próximos passos
+
+<CardGroup cols={2}>
+  <Card
+    title="Mini Games"
+    icon="dice"
+    href="/componentes/mini-games"
+  >
+    Engaje visitantes com mecânicas de gamificação interativas.
+  </Card>
+  <Card
+    title="Modais"
+    icon="window-maximize"
+    href="/componentes/modais"
+  >
+    Configure janelas sobrepostas com gatilhos inteligentes.
+  </Card>
+</CardGroup>

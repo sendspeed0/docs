@@ -1,0 +1,231 @@
+---
+title: "Modais"
+description: "Configure modais inteligentes para captar leads, exibir ofertas e comunicar mensagens com controle total de gatilhos e frequência."
+icon: "window-maximize"
+---
+
+**Nesta página:**
+
+- [O que são Modais](#o-que-são-modais)
+- [Tipos de conteúdo](#tipos-de-conteúdo)
+- [Criando um Modal](#criando-um-modal)
+- [Configuração por dispositivo](#configuração-por-dispositivo)
+- [Efeito de entrada](#efeito-de-entrada)
+- [Acompanhando resultados](#acompanhando-resultados)
+- [Boas práticas](#boas-práticas)
+
+---
+
+## O que são Modais
+
+<Frame caption="Modais aparecem como janelas sobrepostas ao conteúdo da página">
+  <img src="/images/plataforma/modal-ilustracao.png" alt="Ilustração de um modal sobreposto ao conteúdo do site" />
+</Frame>
+
+Modais são **janelas sobrepostas** que aparecem sobre o conteúdo da página, capturando a atenção total do visitante. São o formato de maior impacto entre os componentes da UserIn.
+
+| Aspecto | Detalhe |
+|---------|---------|
+| **Formato** | Overlay centralizado sobre a página |
+| **Conteúdo** | Imagem com CTA ou HTML customizado |
+| **Dispositivos** | Configuração independente para desktop e mobile |
+| **Animação** | Fade, slide, bounce, zoom e outras 8 variações |
+| **Acionamento** | Via Construtor de Fluxos (ação "Exibir Modal" em jornadas InSite) |
+
+<div className="callout-blue">
+  Modais são acionados exclusivamente por **jornadas InSite** no Construtor de Fluxos. No editor de jornadas, use o bloco de ação **Exibir Modal** para selecionar qual modal será exibido ao visitante.
+</div>
+
+---
+
+## Tipos de conteúdo
+
+Ao criar um modal, você escolhe entre dois tipos de conteúdo que definem como o visual será construído.
+
+<Tabs>
+  <Tab title="Imagem">
+    O modal exibe uma **imagem** (banner, arte promocional) com um botão de CTA sobreposto. É o caminho mais rápido para colocar um modal no ar.
+
+    | Configuração | Descrição |
+    |--------------|-----------|
+    | **Imagem** | Upload ou URL da imagem |
+    | **Tamanho** | Largura total, automático ou dimensões customizadas |
+    | **Ajuste** | Contain, cover ou fill |
+    | **Posição** | Centro, topo, base, esquerda ou direita |
+
+    Ideal para campanhas promocionais onde o time de design já produziu a arte final.
+  </Tab>
+
+  <Tab title="HTML">
+    O modal renderiza **HTML customizado**, oferecendo controle total sobre layout, estilos e interações. Suporta variáveis Liquid para personalização dinâmica.
+
+    | Configuração | Descrição |
+    |--------------|-----------|
+    | **HTML** | Código HTML com CSS inline ou classes |
+    | **Dimensionamento** | Automático (ajusta ao conteúdo) ou fixo (largura e altura definidas) |
+
+    Ideal quando você precisa de formulários, layouts complexos ou consistência com o design system do site.
+
+    ```html
+    <div style="padding: 32px; text-align: center;">
+      <h2>Olá, {{contact.firstName:visitante}}!</h2>
+      <p>Aproveite 20% de desconto na sua próxima compra.</p>
+      <a href="/oferta" style="background: #0020E7; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; display: inline-block; margin-top: 16px;">
+        Resgatar desconto
+      </a>
+    </div>
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## Criando um Modal
+
+<Steps>
+  <Step title="Acesse a criação">
+    No menu lateral, acesse **Componentes → Modais**. Na tela "Meus Modais", clique em **Criar um Modal**. Você será direcionado ao editor com o preview em tempo real à direita.
+  </Step>
+
+  <Step title="Preencha as informações básicas">
+    | Campo | Descrição |
+    |-------|-----------|
+    | **Nome** | Identificador interno (obrigatório) |
+    | **Descrição** | Contexto sobre o objetivo do modal (opcional) |
+    | **Tipo** | Imagem ou HTML |
+  </Step>
+
+  <Step title="Configure o conteúdo">
+    Monte o visual do modal conforme o tipo escolhido. O painel esquerdo exibe as opções de configuração organizadas em seções colapsáveis, e o preview à direita atualiza em tempo real.
+
+    **Botão de CTA**: configure texto, cores, tamanho, posição e ação (link, JavaScript ou fechar modal). Suporta HTML customizado e animação de pulse para chamar atenção.
+
+    **Overlay**: defina a cor de fundo atrás do modal (ex: `rgba(0,0,0,0.7)`) e se clicar fora fecha o modal.
+
+    **Botão de fechar**: posição (canto superior direito ou esquerdo), tamanho e cores.
+  </Step>
+
+  <Step title="Salve e ative">
+    Escolha entre **Salvar Rascunho** (status draft) ou **Salvar e Ativar** (status active). Modais ativos ficam disponíveis para seleção no Construtor de Fluxos.
+  </Step>
+</Steps>
+
+<Tip>
+  Use o botão **Visualizar Fullscreen** para ver o modal no tamanho real, simulando como o visitante verá no site.
+</Tip>
+
+---
+
+## Configuração por dispositivo
+
+Modais possuem configurações **independentes para desktop e mobile**. Por padrão, a configuração mobile replica a do desktop, mas você pode desativar essa opção e personalizar cada dispositivo separadamente.
+
+| Cenário | Recomendação |
+|---------|--------------|
+| Imagem responsiva que funciona nos dois formatos | Mantenha "Usar mesma config do Desktop" ativado |
+| Arte diferente para mobile (vertical) e desktop (horizontal) | Desative e configure cada aba separadamente |
+| HTML que precisa de ajustes de layout para telas menores | Desative e ajuste o HTML da aba Mobile |
+
+<div className="callout-blue">
+  Sempre teste o visual nas duas abas (Desktop e Mobile) antes de ativar. Um modal que funciona bem em desktop pode ter o CTA fora da área visível em telas menores.
+</div>
+
+---
+
+## Efeito de entrada
+
+O efeito de entrada define como o modal aparece na tela. Uma animação bem escolhida melhora a experiência sem distrair.
+
+| Efeito | Comportamento |
+|--------|---------------|
+| **Fade** | Aparece gradualmente (opacidade) |
+| **Scale** | Cresce do centro |
+| **Slide Up/Down/Left/Right** | Desliza a partir de uma direção |
+| **Bounce** | Aparece com efeito de salto |
+| **Zoom** | Zoom de fora para dentro |
+| **Nenhum** | Aparece instantaneamente |
+
+Para cada efeito, você ajusta três parâmetros:
+
+| Parâmetro | Faixa | Padrão sugerido |
+|-----------|-------|-----------------|
+| **Duração** | 100 a 1500ms | 300–500ms |
+| **Intensidade** | 0 a 100 | 50 |
+| **Delay** | 0 a 2000ms | 0 |
+
+---
+
+## Acompanhando resultados
+
+Cada modal ativo registra métricas automaticamente. Acesse a análise clicando em **Ver Analytics** na lista de modais.
+
+### KPIs principais
+
+| Métrica | O que mede |
+|---------|------------|
+| **Impressões** | Quantas vezes o modal foi exibido |
+| **Cliques no CTA** | Quantas vezes o botão de ação foi clicado |
+| **CTR** | Taxa de clique (cliques / impressões) |
+| **Fechamentos** | Quantas vezes o visitante fechou o modal (botão X, overlay ou ESC) |
+| **Visitantes únicos** | Quantidade de visitantes distintos que viram o modal |
+| **Tempo médio de visualização** | Quanto tempo o modal ficou visível antes de interação |
+
+### Análises disponíveis
+
+| Análise | Descrição |
+|---------|-----------|
+| **Visão geral** | CTR, taxa de fechamento e tempo médio até o clique |
+| **Eventos por dia** | Gráfico de área com impressões e cliques nos últimos 30 dias |
+| **Por dispositivo** | Distribuição entre desktop, tablet e mobile (gráfico de pizza, barras e tabela) |
+| **Timeline** | Últimos 50 eventos com tipo, dispositivo e timestamp |
+
+<Tip>
+  Se a taxa de fechamento está acima de 70%, o modal pode estar sendo exibido com frequência excessiva ou para uma audiência pouco relevante. Revise a segmentação na jornada e o controle de frequência.
+</Tip>
+
+---
+
+## Boas práticas
+
+<AccordionGroup>
+  <Accordion title="Controle a frequência pela jornada" icon="clock">
+    Como modais capturam a atenção total, são o tipo mais sensível à repetição. No Construtor de Fluxos, use blocos de condição para limitar exibições: uma vez por sessão ou máximo 3 vezes no total é um bom ponto de partida.
+  </Accordion>
+
+  <Accordion title="Adapte o visual para mobile" icon="mobile-screen">
+    Imagens horizontais ficam pequenas em telas verticais. Para campanhas importantes, crie versões separadas: uma arte horizontal para desktop e uma vertical para mobile, desativando a opção "Usar mesma config do Desktop".
+  </Accordion>
+
+  <Accordion title="Mantenha o CTA visível e claro" icon="bullseye-pointer">
+    O botão de ação deve ser o elemento mais visível do modal. Use cores de alto contraste, texto de ação direto (3-4 palavras) e posicione o CTA na metade inferior da área visível.
+  </Accordion>
+
+  <Accordion title="Use exit intent com critério" icon="arrow-right-from-bracket">
+    Modais de exit intent são eficazes para retenção, mas podem frustrar se aplicados em todas as páginas. Restrinja a exibição a páginas de alto valor (checkout, carrinho, precificação) usando condições na jornada.
+  </Accordion>
+
+  <Accordion title="Teste variações com A/B" icon="vials">
+    Crie dois modais com variações de copy, imagem ou oferta. No Construtor de Fluxos, use o bloco **Teste A/B** para dividir o tráfego e identificar qual versão gera mais resultado.
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Próximos passos
+
+<CardGroup cols={2}>
+  <Card
+    title="Smart Blocks"
+    icon="puzzle-piece"
+    href="/componentes/smart-blocks"
+  >
+    Embutir blocos personalizados diretamente na estrutura da página.
+  </Card>
+  <Card
+    title="Mini Games"
+    icon="dice"
+    href="/componentes/mini-games"
+  >
+    Engaje visitantes com mecânicas de gamificação interativas.
+  </Card>
+</CardGroup>

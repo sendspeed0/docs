@@ -9,13 +9,10 @@ icon: "puzzle-piece"
 - [O que são componentes](#o-que-são-componentes)
 - [Quando usar cada tipo](#quando-usar-cada-tipo)
 - [Estrutura de um componente](#estrutura-de-um-componente)
-- [Do zero ao componente ativo](#do-zero-ao-componente-ativo)
 - [Controle quem vê cada componente](#controle-quem-vê-cada-componente)
 - [Defina quando e quantas vezes exibir](#defina-quando-e-quantas-vezes-exibir)
-- [Personalize visual e conteúdo](#personalize-visual-e-conteúdo)
 - [Conecte componentes às suas automações](#conecte-componentes-às-suas-automações)
 - [Teste antes de publicar](#teste-antes-de-publicar)
-- [Acompanhe a performance](#acompanhe-a-performance)
 - [Boas práticas para componentes eficazes](#boas-práticas-para-componentes-eficazes)
 
 ---
@@ -23,8 +20,6 @@ icon: "puzzle-piece"
 ## O que são componentes
 
 Componentes são **elementos visuais interativos** que a UserIn injeta diretamente no seu site para engajar visitantes em tempo real. Diferente de conteúdo estático, cada componente se adapta ao perfil e ao comportamento do visitante, exibindo a mensagem certa para a pessoa certa no momento certo.
-
-Toda a lógica de exibição passa pelo **Editor de Fluxos**. Você define quando o componente aparece, para qual audiência e com qual frequência. O resultado: experiências personalizadas que convertem mais sem exigir desenvolvimento no seu time de produto.
 
 A plataforma organiza componentes em quatro tipos, cada um projetado para um contexto de interação diferente:
 
@@ -36,7 +31,7 @@ A plataforma organiza componentes em quatro tipos, cada um projetado para um con
 | **Mini Games** | Mecânicas interativas de gamificação | Engajamento, recompensas, retenção |
 
 <div className="callout-blue">
-  Componentes são sempre acionados via **Editor de Fluxos**. Isso garante que você controle a segmentação, frequência e prioridade de cada exibição com base em dados reais do visitante.
+  Componentes são sempre acionados via **Construtor de Fluxos** ou **regras da plataforma**. Isso garante que você controle a segmentação, frequência e prioridade de cada exibição com base em dados reais do visitante.
 </div>
 
 ---
@@ -72,7 +67,7 @@ Escolher o componente certo depende do objetivo da interação e do contexto em 
     - Intervenção em momentos de intenção de saída (exit intent)
     - Boas-vindas personalizadas para novos visitantes
 
-    Modais têm alto impacto, mas precisam de controle de frequência para não se tornarem intrusivos. A UserIn oferece regras de frequência nativas.
+    Modais têm alto impacto, mas precisam de controle de frequência para não se tornarem intrusivos.
 
     [Guia completo de Modais →](/componentes/modais)
   </Accordion>
@@ -87,7 +82,7 @@ Escolher o componente certo depende do objetivo da interação e do contexto em 
     - CTAs contextuais que se adaptam ao estágio do funil
     - Seções dinâmicas que mudam com base em segmentos
 
-    Smart Blocks são a opção mais discreta: o visitante vê conteúdo personalizado sem perceber que é um elemento dinâmico. Perfeitos para experiências que se misturam ao design do site.
+    Smart Blocks são a opção mais discreta: o visitante vê conteúdo personalizado sem perceber que é um elemento dinâmico.
 
     [Guia completo de Smart Blocks →](/componentes/smart-blocks)
   </Accordion>
@@ -133,82 +128,7 @@ Todo componente na UserIn, independentemente do tipo, compartilha uma estrutura 
   Nomeie seus componentes com um padrão claro. Uma boa prática: **[Tipo] - [Objetivo] - [Audiência]**. Exemplo: "Modal - Oferta 20% - Novos Visitantes". Isso facilita encontrar e gerenciar componentes quando a lista cresce.
 </Tip>
 
-Cada tipo de componente adiciona propriedades específicas sobre essa base. Cards incluem configuração de posição, Modais incluem tipo de overlay, Smart Blocks incluem o seletor CSS do container, e Mini Games incluem mecânica e configuração de prêmios.
-
----
-
-## Do zero ao componente ativo
-
-O processo de criação segue um fluxo consistente para todos os tipos de componente. Aqui está o caminho completo, da ideia ao componente funcionando no seu site.
-
-<Steps>
-  <Step title="Defina o objetivo">
-    Antes de abrir o editor, tenha clareza sobre três pontos:
-    
-    - **O que** você quer comunicar (oferta, informação, captura de lead)
-    - **Para quem** (qual segmento ou perfil de visitante)
-    - **Quando** (em qual momento da jornada)
-    
-    Essa definição evita retrabalho e garante que o componente tenha um propósito mensurável.
-  </Step>
-
-  <Step title="Escolha o tipo de componente">
-    Com base no objetivo, selecione o formato mais adequado:
-    
-    - Quer chamar atenção sem interromper? **Card**
-    - Precisa de ação imediata? **Modal**
-    - Quer se integrar ao layout da página? **Smart Block**
-    - Quer engajar com gamificação? **Mini Game**
-    
-    Acesse a seção **Componentes** no menu lateral da plataforma e clique em **Criar novo componente**.
-  </Step>
-
-  <Step title="Configure o conteúdo visual">
-    Escolha entre usar um **template pronto** ou criar um design **customizado** com HTML/CSS. Nos dois casos, você pode usar **variáveis Liquid** para personalizar o conteúdo dinamicamente.
-    
-    Exemplos de personalização:
-    
-    ```
-    Olá {{contact.firstName:visitante}}! Temos uma oferta especial para você.
-    ```
-    
-    O editor mostra um preview em tempo real para que você valide o visual antes de publicar.
-  </Step>
-
-  <Step title="Defina a segmentação">
-    Escolha quais visitantes verão o componente. Você pode combinar múltiplas condições:
-    
-    - Pertencer a um **segmento** específico
-    - Ter um **atributo** com determinado valor
-    - Ter realizado (ou não) uma **ação** específica
-    
-    Condições podem ser combinadas com lógica **E** (todas devem ser verdadeiras) ou **OU** (pelo menos uma deve ser verdadeira).
-  </Step>
-
-  <Step title="Configure frequência e agendamento">
-    Defina quantas vezes e quando o componente aparece:
-    
-    - **Frequência por visitante**: uma vez, X vezes, uma vez por sessão, ou sem limite
-    - **Período de exibição**: data de início e fim (opcional)
-    - **Janela de horário**: horários específicos do dia (opcional)
-  </Step>
-
-  <Step title="Conecte ao Editor de Fluxos">
-    Para que o componente funcione no site, ele precisa estar vinculado a um fluxo no **Editor de Fluxos**. Crie um fluxo (ou use um existente) e adicione a ação de exibição do componente.
-    
-    O fluxo controla a lógica completa: quando disparar, quais condições verificar e qual componente exibir.
-  </Step>
-
-  <Step title="Teste e publique">
-    Use o modo de **preview** para validar o componente no contexto real do seu site. Verifique:
-    
-    - O visual está correto em desktop e mobile?
-    - As variáveis estão sendo substituídas corretamente?
-    - A segmentação está selecionando a audiência certa?
-    
-    Quando tudo estiver validado, ative o componente e o fluxo associado.
-  </Step>
-</Steps>
+Cada tipo de componente adiciona propriedades específicas sobre essa base. Cards incluem configuração de posição, Modais incluem tipo de overlay, Smart Blocks incluem o seletor CSS do container, e Mini Games incluem mecânica e configuração de prêmios. Consulte o guia específico de cada tipo para detalhes.
 
 ---
 
@@ -291,78 +211,16 @@ Quando múltiplos componentes são elegíveis para o mesmo visitante no mesmo mo
 
 ---
 
-## Personalize visual e conteúdo
-
-A aparência do componente é tão importante quanto o momento de exibição. A UserIn oferece três caminhos para configurar o visual, do mais simples ao mais flexível.
-
-### Templates prontos
-
-A plataforma disponibiliza templates pré-configurados para cada tipo de componente. Templates incluem layout, cores e estrutura de texto prontos para uso. Você só precisa personalizar o conteúdo (textos, imagens e CTAs).
-
-Templates são o caminho mais rápido para colocar um componente no ar, especialmente quando você está testando uma hipótese e quer velocidade de execução.
-
-### Editor visual
-
-O editor visual permite ajustar propriedades do template sem escrever código. As alterações são refletidas no preview em tempo real.
-
-| Propriedade | O que você pode ajustar |
-|-------------|-------------------------|
-| Cores | Fundo, texto e botões |
-| Tipografia | Fonte, tamanho e peso |
-| Espaçamentos | Margens, paddings e bordas |
-| Imagens | Upload de imagens e ícones |
-| Textos | Conteúdo dos botões, títulos e CTAs |
-
-### HTML/CSS customizado
-
-Para controle total sobre o visual, você pode criar componentes com **HTML e CSS customizados**. Essa opção é ideal quando:
-
-- Seu time de design tem um padrão visual específico
-- Você precisa de layouts complexos que os templates não cobrem
-- Quer garantir consistência visual com o restante do site
-
-```html
-<div class="userin-promo" style="background: linear-gradient(135deg, #667eea, #764ba2); padding: 24px; border-radius: 12px; color: white; text-align: center;">
-  <h2>Olá, {{contact.firstName:visitante}}!</h2>
-  <p>Você tem uma oferta exclusiva esperando.</p>
-  <a href="/oferta" class="cta-btn" style="background: white; color: #764ba2; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block; margin-top: 12px;">
-    Ver minha oferta
-  </a>
-</div>
-```
-
-### Variáveis dinâmicas (Liquid)
-
-Independentemente do caminho escolhido (template, editor ou código), você pode usar **variáveis Liquid** para personalizar o conteúdo com dados reais de cada visitante.
-
-O formato é `{{campo}}`, com suporte a valor padrão via `{{campo:fallback}}`:
-
-| Variável | Resultado | Com fallback |
-|----------|-----------|--------------|
-| `{{contact.firstName}}` | "João" | `{{contact.firstName:visitante}}` → "visitante" se vazio |
-| `{{deposits.total}}` | "2500" | `{{deposits.total:0}}` → "0" se vazio |
-| `{{intention.level}}` | "high" | `{{intention.level:padrão}}` → "padrão" se vazio |
-
-O editor de texto inclui um **picker de variáveis** (botão `{ }`) que permite buscar e inserir variáveis sem precisar memorizar os nomes dos campos.
-
-<Note>
-  Sempre use valor padrão nas variáveis. Nem todo visitante terá todos os campos preenchidos, e um texto com lacunas vazias prejudica a experiência.
-</Note>
-
-Para a lista completa de variáveis disponíveis, consulte o [guia de personalização com variáveis](/plataforma/personalizacao-liquid).
-
----
-
 ## Conecte componentes às suas automações
 
-Componentes não funcionam de forma isolada. Eles são **acionados pelo Editor de Fluxos**, que controla toda a lógica de quando e como exibir cada elemento no site do visitante.
+Componentes não funcionam de forma isolada. Eles são **acionados pelo Construtor de Fluxos**, que controla toda a lógica de quando e como exibir cada elemento no site do visitante.
 
 ### Como o fluxo aciona um componente
 
-O Editor de Fluxos funciona com blocos encadeados. Para exibir um componente, você usa um bloco de ação do tipo **Insite**. O fluxo típico segue esta estrutura:
+O Construtor de Fluxos funciona com blocos encadeados. Para exibir um componente, você usa um bloco de ação do tipo **Insite**. O fluxo típico segue esta estrutura:
 
 ```mermaid
-flowchart LR
+flowchart TD
     A["Gatilho"] --> B["Condição"]
     B --> C["Ação Insite"]
     C --> D["Exibir Componente"]
@@ -372,31 +230,9 @@ flowchart LR
 2. **Condição**: verifica se o visitante atende aos critérios (segmento, atributo, regra)
 3. **Ação Insite**: seleciona qual componente exibir (modal, card, smart block ou mini game)
 
-### Exemplo prático
-
-Cenário: exibir um modal de oferta para visitantes de alta intenção que ainda não converteram.
-
-<Steps>
-  <Step title="Crie o gatilho">
-    Selecione **Regra da plataforma** como gatilho. Escolha a regra que identifica visitantes com alta intenção de compra.
-  </Step>
-
-  <Step title="Adicione uma condição">
-    Insira uma condição para verificar se o visitante **não possui** o segmento "cliente ativo". Isso garante que o modal só aparece para quem ainda não converteu.
-  </Step>
-
-  <Step title="Adicione a ação de exibição">
-    Selecione **Exibir Modal** como ação Insite. Escolha o modal que você configurou com a oferta.
-  </Step>
-
-  <Step title="Ative o fluxo">
-    Revise o fluxo e ative. A partir desse momento, visitantes que atendem ao gatilho e à condição verão o modal automaticamente.
-  </Step>
-</Steps>
-
 ### Teste A/B com componentes
 
-O Editor de Fluxos suporta blocos de **Teste A/B**, que permitem dividir visitantes em variantes aleatórias. Você pode usar isso para testar diferentes versões de um componente:
+O Construtor de Fluxos suporta blocos de **Teste A/B**, que permitem dividir visitantes em variantes aleatórias. Você pode usar isso para testar diferentes versões de um componente:
 
 - **Variante A** (50%): Modal com desconto de 10%
 - **Variante B** (50%): Modal com frete grátis
@@ -416,19 +252,7 @@ Caminhos paralelos executam ações simultaneamente, cada um com suas próprias 
 
 ## Teste antes de publicar
 
-Validar o componente antes de ativar para todos os visitantes evita erros e garante a experiência esperada. A UserIn oferece recursos para facilitar essa etapa.
-
-### Preview no editor
-
-O editor mostra uma visualização em tempo real do componente enquanto você edita. Isso permite verificar:
-
-- Layout e espaçamentos estão corretos
-- Cores e tipografia seguem o padrão visual
-- Variáveis Liquid estão posicionadas corretamente
-
-### Teste com visitante específico
-
-Você pode simular a exibição do componente para um **perfil específico** de visitante. Isso permite verificar se as variáveis estão sendo substituídas pelos valores corretos e se a segmentação está funcionando.
+Validar o componente antes de ativar para todos os visitantes evita erros e garante a experiência esperada.
 
 ### Checklist de validação
 
@@ -450,36 +274,6 @@ Antes de ativar um componente, passe por estes pontos:
 
 ---
 
-## Acompanhe a performance
-
-Após ativar um componente, a UserIn registra automaticamente métricas de performance. Esses dados ajudam a entender o impacto real de cada componente e a otimizar iterativamente.
-
-### Métricas disponíveis
-
-| Métrica | O que mede | Por que importa |
-|---------|------------|-----------------|
-| **Impressões** | Quantas vezes o componente foi exibido | Volume de alcance |
-| **Cliques** | Quantas vezes o visitante interagiu (clique no CTA) | Engajamento direto |
-| **Taxa de clique (CTR)** | Cliques / Impressões × 100 | Eficácia da mensagem e do design |
-| **Conversões** | Ações desejadas realizadas após a interação | Impacto no resultado |
-| **Taxa de conversão** | Conversões / Impressões × 100 | Eficácia geral do componente |
-| **Fechamentos** | Quantas vezes o visitante fechou o componente (modais) | Nível de intrusividade |
-| **Participação** | Quantos visitantes interagiram (mini games) | Adesão à mecânica |
-
-### Como interpretar
-
-A análise de métricas deve considerar o contexto do componente. Referências gerais para avaliação:
-
-- **CTR abaixo de 2%**: o conteúdo ou posicionamento pode não estar chamando atenção suficiente. Revise o copy, o visual ou o momento de exibição.
-- **Taxa de fechamento acima de 70% em modais**: frequência possivelmente alta demais ou a oferta não é relevante para a audiência.
-- **Participação em mini games acima de 40%**: boa adesão. Valores abaixo disso podem indicar que o prêmio não é atrativo ou que o momento de exibição não é adequado.
-
-<Tip>
-  Compare componentes que atendem o mesmo objetivo. Se você tem dois modais de captação de lead, analise qual tem melhor CTR e taxa de conversão. Use o componente vencedor como base para otimizações.
-</Tip>
-
----
-
 ## Boas práticas para componentes eficazes
 
 <AccordionGroup>
@@ -496,7 +290,7 @@ A análise de métricas deve considerar o contexto do componente. Referências g
   </Accordion>
 
   <Accordion title="Teste variações com A/B" icon="vials">
-    Nunca assuma que a primeira versão é a melhor. Use o bloco de Teste A/B no Editor de Fluxos para comparar variações de copy, design, oferta ou formato de componente. Deixe os dados indicarem o vencedor.
+    Nunca assuma que a primeira versão é a melhor. Use o bloco de Teste A/B no Construtor de Fluxos para comparar variações de copy, design, oferta ou formato de componente. Deixe os dados indicarem o vencedor.
     
     Sugestões de variáveis para testar:
     
@@ -532,9 +326,9 @@ A análise de métricas deve considerar o contexto do componente. Referências g
 
 ---
 
-## Próximos passos
+## Guias por tipo de componente
 
-Agora que você entende a estrutura geral de criação de componentes, mergulhe nos guias específicos de cada tipo:
+Cada tipo de componente tem seu próprio guia com instruções detalhadas de criação, configuração visual, analytics e boas práticas específicas:
 
 <CardGroup cols={2}>
   <Card
