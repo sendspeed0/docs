@@ -1,35 +1,84 @@
 ---
-title: "Tracker JavaScript API"
-description: "Referência completa da API JavaScript do tracker UserIn disponível via window.__SmartTrack."
+title: "API Reference"
+description: "Referência completa das APIs da UserIn: Tracker JavaScript, Journey Engine, REST API de ingestão e disparo offsite."
 icon: "terminal"
 ---
 
 **Nesta página:**
 
+- [Visão geral](#visão-geral)
+- [Tracker JavaScript (`__SmartTrack`)](#tracker-javascript)
 - [Identificação](#identificação)
-- [Eventos](#eventos)
+- [Eventos customizados](#eventos-customizados)
+- [Eventos comportamentais](#eventos-comportamentais)
 - [Formulários](#formulários)
 - [Getters](#getters)
 - [Insights AI](#insights-ai)
 - [Dados enviados automaticamente](#dados-enviados-automaticamente)
+- [Journey Engine (`__JourneyInsiteEngine`)](#journey-engine)
+- [REST API (Ingestion)](#rest-api-ingestion)
+- [Identify](#identify)
+- [Track](#track)
+- [Objects](#objects)
+- [Batch](#batch)
+- [Offsite API](#offsite-api)
+- [Storage Keys](#storage-keys)
 
 ---
 
 ## Visão geral
 
-Após instalar o tracker no seu site, o objeto global `__SmartTrack` fica disponível em `window.__SmartTrack`. Através dele, você pode identificar usuários, enviar eventos e configurar o comportamento do tracker.
+A UserIn expõe quatro superfícies de API para diferentes cenários de integração:
+
+<CardGroup cols={2}>
+  <Card title="Tracker JavaScript" icon="browser">
+    Roda no navegador do visitante. Identifica usuários, captura eventos e configura comportamento do tracker.
+
+    **Objeto global:** `window.__SmartTrack`
+  </Card>
+  <Card title="Journey Engine" icon="route">
+    Roda no navegador do visitante. Controla jornadas InSite: dispara triggers manuais, consulta perfil e gerencia estado.
+
+    **Objeto global:** `window.__JourneyInsiteEngine`
+  </Card>
+  <Card title="REST API (Ingestion)" icon="server">
+    API server-to-server para enviar dados de identificação, eventos e objetos via HTTP. Ideal para integração backend.
+
+    **Base URL:** configurável por ambiente
+  </Card>
+  <Card title="Offsite API" icon="paper-plane">
+    API server-to-server para disparar jornadas OffSite (email, SMS, push) para usuários específicos via HTTP.
+
+    **Base URL:** configurável por ambiente
+  </Card>
+</CardGroup>
 
 <div className="callout-blue">
-  O tracker carrega de forma assíncrona. Se precisar garantir que ele está disponível antes de chamar métodos, verifique `typeof __SmartTrack !== 'undefined'`.
+  APIs JavaScript (Tracker e Journey Engine) carregam de forma assíncrona. Se precisar garantir que estão disponíveis antes de chamar métodos, verifique `typeof __SmartTrack !== 'undefined'` ou `typeof __JourneyInsiteEngine !== 'undefined'`.
 </div>
 
 ---
 
-## Identificação
+## Tracker JavaScript
 
-### `setExternalUserContext(userId, properties)`
+O Tracker é instalado via tag `<script>` no site e expõe o objeto global `window.__SmartTrack`. Ele é responsável por identificar visitantes, capturar eventos e enviar dados para a UserIn.
 
-Identifica o visitante atual com dados do seu sistema.
+```html
+<script
+  src="https://smarttrack.userin.ai/tracker.js"
+  api-key="SUA_API_KEY"
+></script>
+```
+
+Após o carregamento, todos os métodos ficam disponíveis em `__SmartTrack`.
+
+---
+
+### Identificação
+
+#### `setExternalUserContext(userId, properties)`
+
+Identifica o visitante atual com dados do seu sistema. Vincula o perfil anônimo (criado pelo tracker) ao ID real, unificando todo o histórico de navegação.
 
 ```javascript
 __SmartTrack.setExternalUserContext('user_123', {
@@ -42,19 +91,19 @@ __SmartTrack.setExternalUserContext('user_123', {
 | Parâmetro | Tipo | Obrigatório | Descrição |
 |-----------|------|:-----------:|-----------|
 | `userId` | `string` | Sim | ID único do usuário no seu sistema |
-| `properties` | `object` | Não | Propriedades do perfil (email, name, etc.) |
+| `properties` | `object` | Não | Propriedades do perfil (email, name, campos customizados) |
 
 <Tip>
-  Chame `setExternalUserContext` o mais cedo possível após o login do usuário. Isso vincula o perfil anônimo (criado pelo tracker) ao ID real, unificando todo o histórico de navegação.
+  Chame `setExternalUserContext` o mais cedo possível após o login do usuário. Quanto antes a identificação, mais completo o perfil unificado.
 </Tip>
 
 ---
 
-## Eventos
+### Eventos customizados
 
-### `customEvent(eventType, metadata)`
+#### `customEvent(eventType, metadata)`
 
-Envia um evento customizado para a UserIn.
+Envia um evento customizado para a UserIn. Eventos customizados aparecem na timeline do visitante e podem ser usados como critério em regras, segmentos e jornadas.
 
 ```javascript
 __SmartTrack.customEvent('purchase_completed', {
@@ -66,18 +115,28 @@ __SmartTrack.customEvent('purchase_completed', {
 
 | Parâmetro | Tipo | Obrigatório | Descrição |
 |-----------|------|:-----------:|-----------|
-| `eventType` | `string` | Sim | Nome do evento |
+| `eventType` | `string` | Sim | Nome do evento (ex: `purchase_completed`, `add_to_cart`) |
 | `metadata` | `object` | Não | Dados adicionais do evento |
 
-### `events(config)`
+#### `track(eventType, metadata)`
 
-Configura quais eventos comportamentais o tracker deve capturar.
+Método alternativo para enviar eventos, usado internamente pelo Journey Engine. Funciona de forma equivalente a `customEvent`.
 
 ```javascript
-// Ativar todos
+__SmartTrack.track('button_clicked', { buttonId: 'cta-hero' });
+```
+
+---
+
+### Eventos comportamentais
+
+#### `events(config)`
+
+Configura quais eventos comportamentais avançados o tracker deve capturar. Por padrão, apenas eventos básicos (pageview, click, scroll) são capturados.
+
+```javascript
 __SmartTrack.events('all');
 
-// Configurar individualmente
 __SmartTrack.events({
   idle: true,
   rageClick: true,
@@ -89,19 +148,21 @@ __SmartTrack.events({
 
 | Evento | Descrição |
 |--------|-----------|
-| `idle` | Detecta inatividade do usuário |
-| `rageClick` | Detecta cliques frustrados (múltiplos cliques rápidos) |
-| `keyboardUsage` | Padrões de uso do teclado |
-| `hoverFrequency` | Frequência de hover sobre elementos |
-| `clipboardUsage` | Uso de copiar/colar |
+| `idle` | Detecta inatividade do usuário na página |
+| `rageClick` | Detecta cliques frustrados (múltiplos cliques rápidos no mesmo elemento) |
+| `keyboardUsage` | Padrões de uso do teclado (frequência, velocidade) |
+| `hoverFrequency` | Frequência de hover sobre elementos interativos |
+| `clipboardUsage` | Uso de copiar/colar na página |
+
+Passe `'all'` para ativar todos, ou um objeto com os eventos desejados.
 
 ---
 
-## Formulários
+### Formulários
 
-### `forms(config)`
+#### `forms(config)`
 
-Configura a estratégia de captura de formulários.
+Configura a estratégia de captura de formulários. O tracker pode capturar automaticamente dados de formulários enviados, respeitando as regras de exclusão.
 
 ```javascript
 __SmartTrack.forms({
@@ -114,34 +175,40 @@ __SmartTrack.forms({
 
 | Parâmetro | Tipo | Padrão | Descrição |
 |-----------|------|--------|-----------|
-| `strategy` | `string` | `'auto'` | `'auto'`, `'whitelist'`, `'blacklist'`, `'disabled'` |
-| `include` | `string[]` | `[]` | Seletores CSS dos formulários a capturar (whitelist) |
-| `exclude` | `string[]` | `[]` | Seletores CSS dos formulários a ignorar (blacklist) |
-| `excludeFields` | `string[]` | `['password', 'cvv']` | Nomes de campos a nunca capturar |
-| `trigger` | `string` | `'submit'` | `'submit'`, `'change'`, `'blur'` |
+| `strategy` | `string` | `'auto'` | `'auto'` (todos), `'whitelist'` (só os listados), `'blacklist'` (todos exceto listados), `'disabled'` |
+| `include` | `string[]` | `[]` | Seletores CSS dos formulários a capturar (quando strategy = whitelist) |
+| `exclude` | `string[]` | `[]` | Seletores CSS dos formulários a ignorar (quando strategy = blacklist) |
+| `excludeFields` | `string[]` | `['password', 'cvv']` | Nomes de campos a nunca capturar (independente da strategy) |
+| `trigger` | `string` | `'submit'` | Quando capturar: `'submit'` (ao enviar), `'change'` (ao alterar) ou `'blur'` (ao sair do campo) |
+
+<div className="callout-blue">
+  Campos sensíveis como `password` e `cvv` são excluídos por padrão. Adicione outros campos sensíveis do seu contexto (ex: `cpf`, `card_number`) na lista `excludeFields`.
+</div>
 
 ---
 
-## Getters
+### Getters
 
-### `getLocalStorageId()`
+Métodos de leitura que retornam informações sobre o visitante atual.
 
-Retorna o ID persistente do visitante (armazenado no localStorage).
+#### `getLocalStorageId()`
+
+Retorna o ID persistente do visitante, armazenado no localStorage. Este ID sobrevive entre sessões.
 
 ```javascript
 const visitorId = __SmartTrack.getLocalStorageId();
 // "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
 ```
 
-### `getSessionId()`
+#### `getSessionId()`
 
-Retorna o ID da sessão atual.
+Retorna o ID da sessão atual. Muda a cada nova sessão.
 
 ```javascript
 const sessionId = __SmartTrack.getSessionId();
 ```
 
-### `getExternalId()`
+#### `getExternalId()`
 
 Retorna o ID externo do usuário (definido via `setExternalUserContext`). Retorna `null` se o visitante não foi identificado.
 
@@ -149,9 +216,9 @@ Retorna o ID externo do usuário (definido via `setExternalUserContext`). Retorn
 const externalId = __SmartTrack.getExternalId();
 ```
 
-### `getCompanyId()`
+#### `getCompanyId()`
 
-Retorna o ID do projeto (extraído da API Key).
+Retorna o ID do projeto (extraído da API Key configurada no script).
 
 ```javascript
 const companyId = __SmartTrack.getCompanyId();
@@ -159,9 +226,11 @@ const companyId = __SmartTrack.getCompanyId();
 
 ---
 
-## Insights AI
+### Insights AI
 
-### Ativação via script
+O Insights AI adiciona uma camada de inteligência artificial ao tracker. Para ativá-lo, use o atributo `buyer-agent` no script ou o método JavaScript.
+
+#### Ativação via script
 
 ```html
 <script
@@ -171,26 +240,374 @@ const companyId = __SmartTrack.getCompanyId();
 ></script>
 ```
 
-### Ativação via JavaScript
+#### Ativação via JavaScript
 
 ```javascript
 __SmartTrack.setBuyerAgent(true);
 ```
 
+Quando ativado, o Insights AI analisa o comportamento do visitante em tempo real e gera diagnósticos e oportunidades acessíveis na seção Insights da plataforma.
+
 ---
 
-## Dados enviados automaticamente
+### Dados enviados automaticamente
 
-Cada evento enviado pelo tracker inclui automaticamente:
+Cada evento enviado pelo tracker inclui automaticamente os seguintes campos:
 
 | Campo | Descrição |
 |-------|-----------|
 | `deviceFingerprint` | Identificador único do dispositivo |
 | `localstorageId` | ID persistente do visitante |
-| `sessionId` | Identificador da sessão |
+| `sessionId` | Identificador da sessão atual |
 | `companyId` | ID do projeto (extraído da API Key) |
-| `event` | Tipo do evento (pageview, click, custom, etc.) |
+| `event` | Tipo do evento (pageview, click, custom, form_submit, etc.) |
 | `metadata` | Dados específicos do evento |
-| `timestamp` | Data/hora do evento |
+| `timestamp` | Data/hora do evento (ISO 8601) |
 | `url` | URL da página atual |
-| `referrer` | URL de origem |
+| `referrer` | URL de origem (página anterior ou fonte externa) |
+
+---
+
+## Journey Engine
+
+O Journey Engine é carregado automaticamente junto com o tracker e expõe o objeto global `window.__JourneyInsiteEngine`. Ele controla a execução de jornadas InSite no navegador do visitante.
+
+### `triggerJourney(journeyId, options)`
+
+Dispara manualmente uma jornada configurada com o gatilho **Trigger Manual**. Use quando quiser controlar via código o momento exato em que uma jornada inicia.
+
+```javascript
+__JourneyInsiteEngine.triggerJourney('journey-id-123');
+
+__JourneyInsiteEngine.triggerJourney('journey-id-123', {
+  triggerNodeId: 'node-id',
+  userData: { promoCode: 'WELCOME10' }
+});
+```
+
+| Parâmetro | Tipo | Obrigatório | Descrição |
+|-----------|------|:-----------:|-----------|
+| `journeyId` | `string` | Sim | ID da jornada a disparar |
+| `options.triggerNodeId` | `string` | Não | ID do nó de trigger específico (quando há múltiplos triggers) |
+| `options.userData` | `object` | Não | Dados adicionais passados ao contexto da jornada |
+
+<Tip>
+  O ID da jornada está disponível na URL do Construtor de Fluxos: `/journey-builder/{journeyId}`. O nome do trigger é configurado no bloco Trigger Manual da jornada.
+</Tip>
+
+### `listJourneys()`
+
+Retorna a lista de jornadas disponíveis e seus triggers.
+
+```javascript
+const journeys = __JourneyInsiteEngine.listJourneys();
+console.log(journeys);
+```
+
+### `getProfile()`
+
+Retorna o perfil completo do visitante atual, incluindo atributos, segmentos e sinais computados.
+
+```javascript
+const profile = __JourneyInsiteEngine.getProfile();
+console.log(profile);
+```
+
+### `getUserAttribute(path)`
+
+Retorna o valor de um atributo específico do perfil usando notação de ponto.
+
+```javascript
+const intentionLevel = __JourneyInsiteEngine.getUserAttribute('intention.level');
+// "high"
+
+const email = __JourneyInsiteEngine.getUserAttribute('contact.email');
+// "maria@empresa.com"
+```
+
+| Parâmetro | Tipo | Obrigatório | Descrição |
+|-----------|------|:-----------:|-----------|
+| `path` | `string` | Sim | Caminho do atributo em notação de ponto |
+
+### `hasTag(tag)`
+
+Verifica se o visitante atual possui um segmento/tag específico.
+
+```javascript
+const isVIP = __JourneyInsiteEngine.hasTag('vip_customer');
+// true ou false
+```
+
+### `reset()`
+
+Reseta o estado de todas as jornadas para o visitante atual. Útil para debug e testes.
+
+```javascript
+__JourneyInsiteEngine.reset();
+```
+
+### `resetJourney(journeyId)`
+
+Reseta o estado de uma jornada específica para o visitante atual.
+
+```javascript
+__JourneyInsiteEngine.resetJourney('journey-id-123');
+```
+
+<div className="callout-blue">
+  Os métodos `reset()` e `resetJourney()` são ferramentas de debug. Não use em produção para controlar o fluxo de jornadas. Para controlar reentrada, configure a opção de reentrada no bloco de gatilho da jornada.
+</div>
+
+---
+
+## REST API (Ingestion)
+
+A API de ingestão permite enviar dados para a UserIn via HTTP, sem depender do tracker JavaScript. Ideal para integrações backend, importação de dados e sincronização com sistemas externos.
+
+Todas as requisições exigem autenticação via API Key no header `Authorization`.
+
+```bash
+Authorization: Bearer SUA_API_KEY
+Content-Type: application/json
+```
+
+### Identify
+
+Identifica ou atualiza o perfil de um usuário.
+
+```bash
+POST /ingest/identify
+```
+
+```json
+{
+  "identifier": {
+    "externalId": "user_123"
+  },
+  "properties": {
+    "email": "joao@empresa.com",
+    "name": "João Silva",
+    "plan": "enterprise"
+  },
+  "context": {
+    "source": "api"
+  }
+}
+```
+
+| Campo | Tipo | Obrigatório | Descrição |
+|-------|------|:-----------:|-----------|
+| `identifier.externalId` | `string` | Sim | ID único do usuário no seu sistema |
+| `properties` | `object` | Não | Atributos do perfil (email, name, campos customizados) |
+| `context.source` | `string` | Não | Origem da identificação (ex: `api`, `crm`, `import`) |
+
+### Track
+
+Envia um evento para o perfil de um usuário.
+
+```bash
+POST /ingest/track
+```
+
+```json
+{
+  "identifier": {
+    "externalId": "user_123"
+  },
+  "event": "purchase_completed",
+  "properties": {
+    "orderId": "ORD-456",
+    "total": 599.90,
+    "currency": "BRL"
+  }
+}
+```
+
+| Campo | Tipo | Obrigatório | Descrição |
+|-------|------|:-----------:|-----------|
+| `identifier.externalId` | `string` | Sim | ID do usuário |
+| `event` | `string` | Sim | Nome do evento |
+| `properties` | `object` | Não | Dados adicionais do evento |
+
+### Objects
+
+Envia dados de objetos definidos na Ontologia.
+
+```bash
+POST /ingest/objects
+```
+
+```json
+{
+  "identifier": {
+    "externalId": "user_123"
+  },
+  "objectType": "order",
+  "data": {
+    "orderId": "ORD-456",
+    "status": "completed",
+    "items": 3
+  }
+}
+```
+
+| Campo | Tipo | Obrigatório | Descrição |
+|-------|------|:-----------:|-----------|
+| `identifier.externalId` | `string` | Sim | ID do usuário |
+| `objectType` | `string` | Sim | Tipo do objeto (conforme definido na Ontologia) |
+| `data` | `object` | Sim | Dados do objeto |
+
+### Batch
+
+Envia múltiplos registros em uma única requisição. Suporta até **10.000 itens** por chamada.
+
+```bash
+POST /ingest/batch
+```
+
+```json
+{
+  "items": [
+    {
+      "type": "identify",
+      "identifier": { "externalId": "user_1" },
+      "properties": { "name": "João" }
+    },
+    {
+      "type": "track",
+      "identifier": { "externalId": "user_1" },
+      "event": "login",
+      "properties": {}
+    },
+    {
+      "type": "identify",
+      "identifier": { "externalId": "user_2" },
+      "properties": { "name": "Maria" }
+    }
+  ]
+}
+```
+
+| Campo | Tipo | Obrigatório | Descrição |
+|-------|------|:-----------:|-----------|
+| `items` | `array` | Sim | Lista de operações (identify, track ou objects) |
+| `items[].type` | `string` | Sim | Tipo da operação: `identify`, `track` ou `objects` |
+
+<Tip>
+  Use o endpoint batch para importações em massa. Enviar 10.000 registros em uma chamada é muito mais eficiente do que 10.000 chamadas individuais.
+</Tip>
+
+---
+
+## Offsite API
+
+A API Offsite permite disparar jornadas OffSite (email, SMS, push) para usuários específicos via HTTP, sem depender de um evento no site.
+
+### Disparar jornada para um usuário
+
+```bash
+POST /api/journeys/offsite/trigger
+```
+
+```json
+{
+  "journeyId": "journey-id-123",
+  "identifier": {
+    "externalId": "user_123"
+  }
+}
+```
+
+| Campo | Tipo | Obrigatório | Descrição |
+|-------|------|:-----------:|-----------|
+| `journeyId` | `string` | Sim | ID da jornada OffSite a disparar |
+| `identifier.externalId` | `string` | Sim | ID do usuário que deve entrar na jornada |
+
+### Disparar jornada em lote
+
+```bash
+POST /api/journeys/offsite/trigger-batch
+```
+
+```json
+{
+  "journeyId": "journey-id-123",
+  "identifiers": [
+    { "externalId": "user_1" },
+    { "externalId": "user_2" },
+    { "externalId": "user_3" }
+  ]
+}
+```
+
+| Campo | Tipo | Obrigatório | Descrição |
+|-------|------|:-----------:|-----------|
+| `journeyId` | `string` | Sim | ID da jornada OffSite |
+| `identifiers` | `array` | Sim | Lista de usuários a incluir na jornada |
+
+<div className="callout-blue">
+  A Offsite API é ideal para integrações com CRMs e sistemas de automação externos. Exemplo: quando um evento no seu ERP indica que um cliente está inativo, use a API para disparar uma jornada de reativação com email e SMS.
+</div>
+
+---
+
+## Storage Keys
+
+O tracker utiliza o localStorage e sessionStorage do navegador para persistir dados entre sessões. Estas chaves podem ser úteis para debug ou integração com outros scripts no site.
+
+### localStorage (persistente)
+
+| Chave | Descrição |
+|-------|-----------|
+| `userin_lsid` | ID persistente do visitante (principal) |
+| `userin_visitor_id` | ID do visitante (alias) |
+| `userin_extid` | ID externo do usuário (após identificação) |
+| `userin_external_id` | ID externo (alias) |
+
+### sessionStorage (por sessão)
+
+| Chave | Descrição |
+|-------|-----------|
+| `userin_session_id` | ID da sessão atual |
+| `userin_profile` | Cache do perfil do visitante |
+| `userin_login` | Estado de autenticação |
+| `__userin_policy_queue__` | Fila de Regras Gerais pendentes de avaliação |
+
+<Note>
+  Nunca manipule essas chaves diretamente em produção. Elas são gerenciadas internamente pelo tracker. Para ler valores, use os métodos getters (`getLocalStorageId()`, `getSessionId()`, `getExternalId()`).
+</Note>
+
+---
+
+## Próximos passos
+
+<CardGroup cols={2}>
+  <Card
+    title="Instalar o Tracker"
+    icon="download"
+    href="/onboarding/instalar-tracker"
+  >
+    Guia passo a passo para instalar o tracker no seu site.
+  </Card>
+  <Card
+    title="Conectando Dados"
+    icon="database"
+    href="/onboarding/conectando-dados"
+  >
+    Configure identificação, formulários e eventos após a instalação.
+  </Card>
+  <Card
+    title="Jornadas"
+    icon="route"
+    href="/plataforma/jornadas"
+  >
+    Crie automações que usam triggers manuais e dados da API.
+  </Card>
+  <Card
+    title="Ontologia de Dados"
+    icon="diagram-project"
+    href="/plataforma/ontologia"
+  >
+    Configure os objetos e campos customizados usados na API de ingestão.
+  </Card>
+</CardGroup>
