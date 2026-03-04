@@ -7,13 +7,18 @@ icon: "users-viewfinder"
 **Nesta página:**
 
 - [O que é Audiência](#o-que-é-audiência)
+- [Painel de Audiência](#painel-de-audiência)
 - [Segmentos: os blocos da sua audiência](#segmentos-os-blocos-da-sua-audiência)
 - [Criando um segmento](#criando-um-segmento)
 - [Tipos de critérios](#tipos-de-critérios)
 - [Dinâmico vs estático](#dinâmico-vs-estático)
 - [Combinando segmentos](#combinando-segmentos)
+- [Gerenciando segmentos](#gerenciando-segmentos)
+- [Construtor de Segmentos](#construtor-de-segmentos)
 - [Parametrização de Audiência](#parametrização-de-audiência)
 - [Tipos de regras](#tipos-de-regras)
+- [Configuração de intenção](#configuração-de-intenção)
+- [Configuração de depósito](#configuração-de-depósito)
 - [Anatomia de uma regra](#anatomia-de-uma-regra)
 - [Criando uma regra passo a passo](#criando-uma-regra-passo-a-passo)
 - [Prioridade entre regras](#prioridade-entre-regras)
@@ -59,6 +64,91 @@ A tela de Audiência é organizada em três áreas:
 <div className="callout-blue">
   Audiências são **reativas**. Você não precisa atualizar listas manualmente. A plataforma reavalia cada visitante a cada novo evento, mantendo tudo sempre atualizado.
 </div>
+
+---
+
+## Painel de Audiência
+
+O Painel é a primeira tela ao acessar Audiência no menu lateral. Ele consolida indicadores, funis e gráficos que ajudam a entender o estado atual da base de visitantes sem precisar abrir relatórios individuais.
+
+### Indicadores principais (KPIs)
+
+Cinco cards no topo apresentam as métricas do período selecionado, cada um com variação percentual em relação ao período anterior:
+
+| KPI | O que mostra |
+|-----|-------------|
+| **Total de Usuários** | Quantidade total de visitantes na base |
+| **Novos FTD** | Visitantes que realizaram a primeira conversão no período |
+| **Receita do Período** | Valor total de depósitos no período (R$) |
+| **Taxa de Conversão** | Percentual de registrados que converteram no período |
+| **Churn do Período** | Visitantes que se tornaram inativos no período |
+
+Use o **seletor de período** no topo para alternar entre visualização **semanal** e **mensal**. Navegue entre períodos com as setas ou selecione diretamente no dropdown, que lista os últimos 12 períodos disponíveis.
+
+### Funil de estágios
+
+O funil mostra a progressão dos visitantes pelos quatro estágios do ciclo de vida:
+
+| Estágio | Sigla | Descrição |
+|---------|-------|-----------|
+| **Anônimo** | - | Visitante navegando sem identificação |
+| **Registrado** | - | Visitante que se cadastrou (identificado) |
+| **FTD** | First Time Deposit | Visitante que realizou a primeira conversão |
+| **MTD** | Multi Time Deposit | Visitante com conversões recorrentes |
+
+Entre cada estágio, o funil exibe a **taxa de conversão** (cadastro, FTD, retorno) e a **receita** gerada nos estágios com depósito.
+
+### Gráficos e análises
+
+<Tabs>
+  <Tab title="Evolução Temporal">
+    Gráfico de linhas com evolução **semanal ou mensal** de três métricas: usuários, FTDs e receita.
+
+    O painel inclui um resumo com valor do período atual, média das últimas 12 semanas/meses e indicador de tendência (alta, queda ou estável).
+  </Tab>
+
+  <Tab title="Segmentos mais aplicados">
+    Lista os 8 segmentos com mais visitantes associados. Cada item mostra a contagem absoluta e o percentual em relação ao total da base.
+
+    Use para identificar quais segmentos concentram a maior parte da audiência e quais estão sub-representados.
+  </Tab>
+
+  <Tab title="Cohorts de Retenção">
+    Mapa de calor que mostra a retenção de visitantes ao longo de semanas consecutivas.
+
+    | Tipo de cohort | O que mede |
+    |----------------|-----------|
+    | Registro → FTD | Tempo entre o cadastro e a primeira conversão |
+    | FTD → Depósito | Tempo entre a primeira e as próximas conversões |
+
+    A legenda indica: **alta conversão** (≥ 30%, verde), **baixa** (< 15%, vermelho) e **não disponível** (cinza).
+  </Tab>
+
+  <Tab title="Performance de UTMs">
+    Analisa o desempenho dos parâmetros UTM que trouxeram visitantes ao site.
+
+    Agrupável por **Source**, **Medium** ou **Campaign**. Para cada valor de UTM, a tabela exibe: registros, FTDs, taxa de conversão e receita gerada.
+
+    Conversão é classificada como **boa** (≥ 30%), **média** (15-30%) ou **baixa** (< 15%).
+  </Tab>
+
+  <Tab title="Distribuição por Tier">
+    Mostra como os visitantes com depósitos estão distribuídos entre os tiers de valor:
+
+    | Tier | Descrição |
+    |------|-----------|
+    | **Whale** | Valor muito alto |
+    | **High** | Alto valor |
+    | **Medium** | Valor médio |
+    | **Low** | Valor básico |
+
+    Cada tier exibe a quantidade de usuários, receita acumulada e uma barra de progresso proporcional.
+  </Tab>
+</Tabs>
+
+<Tip>
+  Comece cada análise pelo funil de estágios. Se a taxa de conversão entre "Registrado" e "FTD" estiver baixa, concentre suas jornadas nesse ponto. Se a retenção pós-FTD cair nas cohorts, priorize jornadas de reativação.
+</Tip>
 
 ---
 
@@ -252,6 +342,174 @@ Resultado: visitantes de alto potencial (por intenção OU valor), identificados
 
 ---
 
+## Gerenciando segmentos
+
+A tela de gestão lista todos os segmentos cadastrados na plataforma. No topo, quatro cards resumem o estado geral:
+
+| Indicador | O que mostra |
+|-----------|-------------|
+| **Total de Segmentos** | Quantidade total cadastrada |
+| **Segmentos Ativos** | Quantos estão habilitados e sendo avaliados |
+| **Categorias** | Quantas categorias diferentes estão em uso |
+| **Sincronizados** | Quantos segmentos estão sendo enviados para integrações externas |
+
+### Filtros da listagem
+
+A lista suporta três tipos de filtro combináveis:
+
+| Filtro | Opções |
+|--------|--------|
+| **Busca por texto** | Pesquisa por nome técnico ou nome de exibição |
+| **Sincronização** | Todos, Sincronizados, Não sincronizados |
+| **Categoria** | Filtra por categoria com contagem de segmentos em cada uma |
+
+### Formulário de segmento
+
+Ao clicar em **Criar Segmento**, o formulário apresenta os seguintes campos:
+
+| Campo | Obrigatório | Descrição |
+|-------|-------------|-----------|
+| **Nome Técnico** | Sim | Identificador interno usado pelo motor de regras (ex: `high_value_user`) |
+| **Nome de Exibição** | Sim | Nome legível exibido na interface e relatórios (ex: "Usuário de Alto Valor") |
+| **Descrição** | Não | Texto livre para documentar o propósito do segmento |
+| **Cor** | Não | Cor de identificação visual (10 opções disponíveis) |
+| **Categoria** | Não | Classificação do segmento para organização |
+| **Prioridade** | Não | Número que define a ordem de avaliação (menor = mais prioritário) |
+| **Ativa** | Sim | Liga ou desliga a avaliação do segmento |
+| **Sincronizar com Integrações** | Não | Quando ativado, o segmento é enviado para plataformas integradas (CRMs) |
+
+### Categorias de segmentos
+
+Segmentos são organizados em sete categorias para facilitar a gestão:
+
+| Categoria | Uso típico |
+|-----------|-----------|
+| **Intenção** | Segmentos baseados em score e nível de intenção |
+| **Financeiro** | Segmentos baseados em valor, tier e depósitos |
+| **Risco** | Segmentos de churn, declínio e inatividade |
+| **Preferências** | Segmentos baseados em interesses e categorias de conteúdo |
+| **Comportamento** | Segmentos baseados em frequência, engajamento e ações |
+| **Lifecycle** | Segmentos de estágio no ciclo de vida (novo, primeiro depósito, recorrente) |
+| **Geral** | Segmentos que não se encaixam nas categorias acima |
+
+A plataforma sugere automaticamente a categoria com base nas palavras-chave do nome técnico.
+
+### Condições do segmento
+
+Cada segmento é definido por um conjunto de **condições** organizadas em grupos:
+
+- Dentro de um grupo, as condições se combinam com lógica **E** (todas devem ser verdadeiras)
+- Entre grupos, a lógica é **OU** (pelo menos um grupo deve ser verdadeiro)
+
+Cada condição é composta por: **campo** (selecionado via picker de campos da Ontologia), **operador** e **valor**.
+
+Operadores disponíveis:
+
+| Operador | Símbolo | Descrição |
+|----------|---------|-----------|
+| Igual | `=` | Valor exato |
+| Diferente | `≠` | Qualquer valor exceto o especificado |
+| Maior que | `>` | Acima do valor |
+| Maior ou igual | `≥` | Acima ou igual ao valor |
+| Menor que | `<` | Abaixo do valor |
+| Menor ou igual | `≤` | Abaixo ou igual ao valor |
+| Está em | `∈` | Valor está na lista |
+| Não está em | `∉` | Valor não está na lista |
+| Contém | `⊃` | Texto contém a substring |
+| Existe | `∃` | Campo tem algum valor (não está vazio) |
+
+<div className="callout-blue">
+  O picker de campos exibe todos os campos configurados na Ontologia, incluindo campos customizados. Isso permite criar segmentos com critérios específicos do seu negócio, além dos campos padrão da plataforma.
+</div>
+
+### Sincronização com integrações
+
+Quando a opção **Sincronizar com Integrações** está ativada, o segmento é enviado automaticamente para plataformas conectadas (ex: CRMs). Isso permite que sistemas externos usem os mesmos segmentos da UserIn para personalizar comunicações.
+
+O filtro de sincronização na listagem ajuda a identificar rapidamente quais segmentos estão sendo compartilhados.
+
+### Segmentos padrão
+
+A plataforma inclui segmentos pré-configurados, identificados pelo badge **UserIn**. Esses segmentos são criados automaticamente e cobrem cenários comuns de classificação.
+
+Segmentos padrão têm o nome técnico protegido (não editável), mas você pode ajustar condições, cor, prioridade e demais configurações. O botão **Resetar para Padrão** restaura as configurações originais caso você precise reverter alterações.
+
+---
+
+## Construtor de Segmentos
+
+Para segmentos com critérios mais complexos, a plataforma oferece o **Construtor de Segmentos**: um editor visual com arrastar e soltar que permite montar regras compostas.
+
+### Elementos do construtor
+
+| Elemento | Descrição |
+|----------|-----------|
+| **Detalhes do Segmento** | Nome e descrição do segmento |
+| **Biblioteca de Condições** | Painel lateral com condições predefinidas para arrastar |
+| **Área de Construção** | Canvas central onde as condições são montadas |
+| **Estimativa de Audiência** | Card que mostra quantos visitantes atendem aos critérios (total, identificados e anônimos) |
+| **Insights** | Indicadores de crescimento, precisão e tendência do segmento |
+
+### Biblioteca de condições
+
+A biblioteca oferece templates prontos organizados por categoria:
+
+| Categoria | Condições disponíveis |
+|-----------|----------------------|
+| **Dados do Usuário** | Atributo do Usuário |
+| **Comportamento** | Condição de Página, Condição de Formulário, Contagem de Eventos, Tempo Desde Evento |
+| **Mensagens** | Condição de Email |
+| **Dispositivo** | Condição de Dispositivo |
+
+Arraste uma condição da biblioteca para a área de construção e configure os parâmetros (campo, operador e valor).
+
+### Gerador de Segmentos com IA
+
+Assim como nas jornadas, a Audiência oferece um gerador por inteligência artificial. Descreva o segmento em linguagem natural e a IA monta as condições automaticamente.
+
+<Steps>
+  <Step title="Clique em Gerar com IA">
+    No topo do Construtor de Segmentos, clique no botão de geração por IA.
+  </Step>
+  <Step title="Descreva o segmento">
+    Escreva o que o segmento deve representar. Seja específico sobre critérios, valores e períodos.
+  </Step>
+  <Step title="Revise e ajuste">
+    A IA gera as condições automaticamente. Revise cada condição no canvas e ajuste valores ou operadores conforme necessário.
+  </Step>
+</Steps>
+
+**Exemplos de prompts que funcionam bem:**
+
+| Prompt | Resultado |
+|--------|-----------|
+| "Usuários que visitaram a página de preços nos últimos 30 dias mas não compraram" | Condição de página + condição de evento + operador temporal |
+| "Clientes de alto valor com mais de 5 compras" | Condição de atributo financeiro + contagem |
+| "Visitantes mobile que fizeram login na última semana" | Condição de dispositivo + condição de evento + período |
+
+### Segmentos prontos
+
+A aba **Segmentos Prontos** oferece templates completos que você pode aplicar com um clique:
+
+| Segmento | Critérios incluídos |
+|----------|-------------------|
+| **Clientes Alto Valor** | Atributos financeiros + histórico de compras + status |
+| **Mobile Engajados** | Dispositivo mobile + páginas visitadas + login recente |
+| **Carrinho Abandonado** | Adicionou ao carrinho + não finalizou compra + visitou a página |
+| **Engajados Email** | Abriu emails + clicou em links + consentimento ativo |
+
+### Importar e exportar
+
+O Construtor suporta importação e exportação de regras em formato JSON. Isso permite compartilhar configurações entre ambientes, versionar regras em sistemas de controle ou restaurar configurações anteriores.
+
+O modal de importação oferece três modos: **Gerar com IA**, **Exemplos** (templates prontos em JSON) e **JSON Manual** (cole ou carregue um arquivo).
+
+<Tip>
+  Use a estimativa de audiência como guia. Se o número de visitantes é zero, os critérios provavelmente estão restritivos demais. Se é igual ao total da base, os critérios estão muito amplos. Ajuste até encontrar o equilíbrio para o objetivo da sua segmentação.
+</Tip>
+
+---
+
 ## Parametrização de Audiência
 
 A Parametrização é onde você configura **regras automáticas** que classificam visitantes em segmentos. Em vez de criar segmentos por critérios simples, as regras avaliam padrões complexos e aplicam segmentos automaticamente.
@@ -310,6 +568,130 @@ Múltiplas regras podem ser avaliadas e executadas para o mesmo visitante no mes
     **Quando usar:** para identificar clientes de alto valor, visitantes inativos ou padrões de compra.
   </Tab>
 </Tabs>
+
+---
+
+### Configuração de intenção
+
+A aba de **Intenção** na Parametrização permite ajustar como a plataforma calcula o score de intenção de cada visitante. A configuração é dividida em três áreas.
+
+#### Thresholds de classificação
+
+Definem os limites para classificar visitantes por nível de intenção:
+
+| Nível | Condição | Padrão |
+|-------|----------|--------|
+| **Alto** | Score maior ou igual ao threshold | ≥ 70 |
+| **Médio** | Score entre o threshold médio e o alto | ≥ 40 e < 70 |
+| **Baixo** | Score abaixo do threshold médio | < 40 |
+
+#### Pesos por estágio
+
+O score de intenção é calculado como uma **média ponderada** de fatores comportamentais. Cada fator recebe um peso, e os pesos devem somar 100 por estágio.
+
+| Fator | O que avalia |
+|-------|-------------|
+| **Duração da Sessão** | Tempo médio de permanência por sessão |
+| **Páginas Visitadas** | Total de páginas visualizadas |
+| **Páginas Únicas** | Quantidade de páginas diferentes acessadas |
+| **Conteúdos Visualizados** | Páginas de conteúdo específico visitadas |
+| **Visitou Página de Conversão** | Se acessou páginas-chave configuradas |
+| **Sessões após FTD** | Frequência de retorno após a primeira conversão |
+| **Frequência de Depósito** | Regularidade de conversões |
+| **Valor Médio de Depósito** | Ticket médio das conversões |
+| **Recência** | Tempo desde a última atividade |
+
+Os pesos são configurados **por estágio** (Anônimo, Registrado, FTD, MTD), pois a importância de cada fator muda conforme o visitante avança no funil.
+
+#### Benchmarks
+
+Para cada estágio, configure os valores de referência que definem o que é considerado "bom" para cada fator:
+
+| Benchmark | Exemplo |
+|-----------|---------|
+| **Duração boa (min)** | 5 minutos |
+| **Páginas boas** | 8 páginas |
+| **Páginas únicas boas** | 5 páginas |
+| **Conteúdos bons** | 3 conteúdos |
+| **Recência máxima (dias)** | 7 dias |
+| **Depósitos/mês mínimos** | 2 depósitos |
+
+#### Páginas de conversão
+
+Para cada estágio, defina as URLs que representam **intenção de conversão**. Quando o visitante acessa uma dessas páginas, o fator "Visitou Página de Conversão" é ativado.
+
+Exemplo: `/register` para anônimos, `/deposit` para registrados.
+
+<div className="callout-blue">
+  Os pesos devem somar exatamente 100 por estágio. Priorize os fatores que melhor indicam intenção no contexto do seu produto. Para visitantes anônimos, foque em navegação (duração, páginas). Para FTDs, foque em frequência e valor de depósito.
+</div>
+
+---
+
+### Configuração de depósito
+
+A aba de **Depósito** na Parametrização configura a classificação financeira dos visitantes. Ela define tiers, alertas, metas e análise de tendência.
+
+#### Tiers de depósito
+
+Faixas de valor que classificam visitantes por volume de depósitos:
+
+| Tier | Faixa padrão |
+|------|-------------|
+| **Low** | R$ 0 a R$ 100 |
+| **Medium** | R$ 100 a R$ 500 |
+| **High** | R$ 500 a R$ 2.000 |
+| **Whale** | R$ 2.000+ |
+
+Os valores mínimo e máximo de cada tier são editáveis. Ajuste conforme o ticket médio do seu produto.
+
+#### Alertas de inatividade
+
+Definem quando o sistema sinaliza visitantes inativos:
+
+| Alerta | O que monitora | Padrão |
+|--------|---------------|--------|
+| **Alerta Amarelo** | Dias sem atividade para alerta inicial | 7 dias |
+| **Alerta Vermelho** | Dias sem atividade para alerta crítico | 14 dias |
+| **Saldo Baixo** | Threshold de saldo para sinalização | R$ 50 |
+
+Esses alertas alimentam segmentos automáticos de risco e podem ser usados como critério em jornadas.
+
+#### Metas de depósito
+
+Valores-alvo que a plataforma usa para avaliar a saúde financeira da base:
+
+| Meta | O que define | Padrão |
+|------|-------------|--------|
+| **Meta Semanal** | Receita esperada por semana | R$ 500 |
+| **Meta Mensal** | Receita esperada por mês | R$ 2.000 |
+| **Ticket Médio Ideal** | Valor médio esperado por depósito | R$ 100 |
+
+Metas são usadas para calcular os indicadores de performance no Painel de Audiência.
+
+#### LTV (Lifetime Value)
+
+Thresholds para classificar o valor vitalício dos visitantes:
+
+| Classificação | Threshold padrão |
+|---------------|-----------------|
+| **LTV Baixo** | Até R$ 1.000 |
+| **LTV Médio** | R$ 1.000 a R$ 5.000 |
+| **LTV Alto** | Acima de R$ 20.000 |
+
+#### Análise de tendência
+
+Configuração do algoritmo que identifica se o comportamento de depósito do visitante está **subindo**, **caindo** ou **estável**:
+
+| Parâmetro | O que define | Padrão |
+|-----------|-------------|--------|
+| **Período de Análise** | Janela temporal para calcular tendência | 4 semanas |
+| **Threshold de Aumento** | Variação mínima para classificar como tendência de alta | 20% |
+| **Threshold de Queda** | Variação mínima para classificar como tendência de queda | 20% |
+
+<Tip>
+  Revise os tiers de depósito e metas trimestralmente. À medida que a base de visitantes cresce e o perfil muda, os valores padrão podem se tornar inadequados. Use o Painel de Audiência para validar se a distribuição por tier está equilibrada.
+</Tip>
 
 ---
 
