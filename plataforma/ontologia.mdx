@@ -1,488 +1,979 @@
 ---
 title: "Ontologia de Dados"
-description: "Entenda como a UserIn organiza os dados dos seus visitantes: campos, sinais, outputs e como usá-los em regras e personalização."
+description: "Todos os 101 campos de perfil da UserIn organizados por tipo: atributos, agregados, sinais e outputs, com origem, lógica e uso de cada um."
 icon: "diagram-project"
 ---
 
-A ontologia é a forma como a UserIn organiza **todos os dados** que conhece sobre cada visitante do seu site. Pense nela como a ficha completa de cada pessoa: quem é, o que fez, quanto gastou, quando acessa e o que provavelmente vai fazer a seguir.
+A ontologia é a forma como a UserIn organiza todos os dados que conhece sobre cada visitante. Cada campo pertence a um dos 4 tipos, que determina como é preenchido, com que frequência é atualizado e como interpretá-lo ao criar regras, segmentos e automações.
 
 <div className="callout-blue">
-  Você não precisa entender os detalhes técnicos da ontologia para usar a plataforma. Mas conhecer como os dados são organizados vai te ajudar a criar regras, segmentos e automações mais eficientes.
+  Todos os campos aparecem juntos no construtor de condições, independente do tipo. Campos marcados com **iGaming** só estão disponíveis para empresas configuradas na vertical `bets`.
 </div>
 
 **Nesta página:**
 
-- [Como os dados são organizados](#como-os-dados-são-organizados)
 - [Os 4 tipos de dados](#os-4-tipos-de-dados)
-- [Referência de campos](#referência-de-campos)
-- [Sinais: interpretações inteligentes](#sinais-interpretações-inteligentes)
-- [Outputs: resultados de IA](#outputs-resultados-de-ia)
+- [Atributos](#atributos)
+- [Agregados](#agregados)
+- [Sinais](#sinais)
+- [Outputs](#outputs)
 - [Sinais customizados](#sinais-customizados)
-- [Campos por categoria de negócio](#campos-por-categoria-de-negócio)
 - [Campos customizados](#campos-customizados)
 - [Como usar campos em condições](#como-usar-campos-em-condições)
 - [Exemplos práticos](#exemplos-práticos)
-- [Onde a ontologia aparece na plataforma](#onde-a-ontologia-aparece-na-plataforma)
 
 ---
-
-## Como os dados são organizados
-
-Cada visitante tem um **perfil** que acumula informações ao longo do tempo. Esses dados são organizados em **grupos** temáticos:
-
-```mermaid
-flowchart TD
-    P[Perfil do Visitante] --> ID[Identidade]
-    P --> LC[Ciclo de Vida]
-    P --> FI[Financeiro]
-    P --> CO[Comportamento]
-    P --> PR[Preferências]
-    P --> IN[Intenção]
-    P --> SG[Segmentos]
-    P --> CT[Contato]
-```
-
-<AccordionGroup>
-  <Accordion title="Identidade" icon="user">
-    Dados que identificam o visitante: ID externo, visitor ID, data do primeiro acesso. Esses campos são preenchidos automaticamente pelo tracker e pela integração com seu sistema.
-  </Accordion>
-
-  <Accordion title="Ciclo de Vida" icon="arrows-spin">
-    O **estágio** atual do visitante na jornada de cliente:
-    - **Anônimo**: visitou o site mas ainda não se identificou
-    - **Registrado**: criou conta ou se identificou
-    - **FTD**: fez a primeira compra/transação
-    - **Recorrente**: fez mais de uma compra/transação
-  </Accordion>
-
-  <Accordion title="Financeiro" icon="dollar-sign">
-    Tudo sobre transações: total gasto, quantidade de compras, ticket médio, valor da primeira compra, tendência de gastos (aumentando, estável ou diminuindo) e classificação por faixa de valor.
-  </Accordion>
-
-  <Accordion title="Comportamento" icon="chart-line">
-    Como o visitante interage com seu site: total de sessões, duração média, frequência semanal, quantidade de dispositivos usados e páginas visitadas.
-  </Accordion>
-
-  <Accordion title="Preferências" icon="heart">
-    O que o visitante mais acessa: páginas mais visitadas, categorias preferidas e padrões de navegação. Os campos de preferência variam conforme a categoria do seu negócio.
-  </Accordion>
-
-  <Accordion title="Intenção" icon="crosshairs">
-    A probabilidade de o visitante converter (fazer uma compra, se registrar, etc.). Calculada automaticamente pela IA da UserIn com base no comportamento, engajamento e recência.
-  </Accordion>
-
-  <Accordion title="Segmentos" icon="users-viewfinder">
-    Rótulos dinâmicos aplicados ao visitante pelas suas regras e automações. Por exemplo: "VIP", "carrinho_abandonado", "risco_churn". Você controla quais segmentos existem e as condições para entrar ou sair deles.
-  </Accordion>
-
-  <Accordion title="Contato" icon="address-book">
-    Informações de contato capturadas: nome, email, telefone. Usadas para personalização de mensagens e campanhas.
-  </Accordion>
-</AccordionGroup>
 
 ## Os 4 tipos de dados
 
-Nem todos os campos são iguais. A UserIn classifica cada dado do perfil em 4 categorias:
-
 <CardGroup cols={2}>
   <Card title="Atributos" icon="database">
-    **Fatos imutáveis.** Dados que não mudam depois de registrados. Exemplo: data do primeiro acesso, valor da primeira compra, email.
+    **Fatos registrados.** Chegam via integração ou tracker e são armazenados como vieram, sem transformação. Exemplos: ID externo, email, valor do primeiro depósito, saldo inicial da sessão.
+
+    Atualização: apenas quando a integração envia um novo valor.
   </Card>
   <Card title="Agregados" icon="calculator">
-    **Totais e médias.** Números que a plataforma calcula automaticamente somando eventos. Exemplo: total gasto, quantidade de sessões, ticket médio.
+    **Totais, contagens e médias.** Calculados automaticamente somando ou contando eventos recebidos. Exemplos: total apostado, quantidade de sessões, GGR total, wins na última hora.
+
+    Atualização: em tempo real a cada evento recebido.
   </Card>
   <Card title="Sinais" icon="signal">
-    **Interpretações inteligentes.** Derivados dos dados brutos usando janelas temporais e regras. Exemplo: tendência de gastos (aumentando/diminuindo), melhor horário para contato, classificação por tier.
+    **Interpretações inteligentes.** Derivados dos dados brutos usando janelas temporais, thresholds e lógica de negócio. Exemplos: tier de depósito, tendência, nível de frustração, melhor horário de contato.
+
+    Atualização: periódica (RT, diária ou semanal conforme o sinal).
   </Card>
   <Card title="Outputs" icon="brain">
-    **Resultados de IA.** Valores calculados por modelos que combinam múltiplos sinais. Exemplo: score de intenção (0-100), nível de intenção (alto/médio/baixo), próximo passo recomendado.
+    **Resultados de modelos de decisão.** Calculados combinando múltiplos campos com pesos. Exemplos: score de intenção, tier VIP, melhor ação de retenção, canal recomendado.
+
+    Atualização: diária.
   </Card>
 </CardGroup>
 
 <Tip>
-  **Na prática**, você não precisa se preocupar com essas categorias ao criar regras. Todos os campos aparecem juntos no construtor de condições. Mas é útil saber que um "Score de Intenção" (output) é mais sofisticado que um simples "Total Gasto" (agregado).
+  A diferença prática: um **Atributo** diz o que aconteceu ("depositou R$ 50 pela primeira vez"), um **Sinal** interpreta ("está em sequência de perdas"), um **Output** recomenda ("ofertar freespin agora pelo canal onsite_modal").
 </Tip>
 
 ---
 
-## Referência de campos
+## Atributos
 
-Cada visitante acumula dados em seu perfil. Abaixo estão todos os campos que você pode usar para criar regras, segmentos e personalizar conteúdo.
+Dados que chegam via integração ou tracker e são armazenados como vieram. Não são calculados pela plataforma.
 
-<div className="callout-blue">
-  Campos disponíveis em **Regras** podem ser usados como condição em regras e jornadas. Campos disponíveis em **Liquid** podem ser usados para personalizar textos em templates via variáveis.
-</div>
+### Identidade
 
-### Ciclo de Vida
+Campos internos de identificação do visitante. Não aparecem no construtor de condições, mas são a base de todo o perfil.
 
-O campo mais importante para segmentar seus visitantes.
+| Path | Label | Descrição |
+|------|-------|-----------|
+| `externalId` | ID Externo | ID do visitante no sistema do cliente (ex: user_id) |
+| `companyId` | ID da Empresa | ID da empresa / tenant |
+| `visitorId` | Visitor ID | Último localStorage ID usado pelo visitante |
 
-| Campo | Descrição | Valores possíveis |
-|-------|-----------|-------------------|
-| **Estágio** | Fase atual do visitante na jornada de cliente | Anônimo, Registrado, FTD, Recorrente |
-
-<Tip>
-  Use o estágio como primeira condição nas suas regras. Por exemplo: "Se o estágio é **Anônimo** E visitou a página de preços" para exibir um modal de cadastro.
-</Tip>
-
-### Financeiro
-
-Dados sobre transações e gastos do visitante.
-
-| Campo | Descrição | Tipo | Exemplo |
-|-------|-----------|------|---------|
-| **Total Depositado** | Soma de todos os valores | Número | R\$ 2.500 |
-| **Qtd. de Depósitos** | Quantas transações realizou | Número | 8 |
-| **Ticket Médio** | Valor médio por transação | Número | R\$ 312,50 |
-| **Valor do 1o Depósito** | Quanto pagou na primeira vez | Número | R\$ 50 |
-| **Dias Desde Último Depósito** | Há quanto tempo não compra | Número | 14 |
-| **Tier de Depósitos** | Classificação por faixa de valor | Lista | None, Low, Medium, High, Whale |
-| **Tendência** | Os gastos estão subindo ou caindo? | Lista | Aumentando, Estável, Diminuindo |
-
-### Comportamento
-
-Como o visitante interage com seu site.
-
-| Campo | Descrição | Tipo | Exemplo |
-|-------|-----------|------|---------|
-| **Total de Sessões** | Quantas vezes visitou o site | Número | 42 |
-| **Duração Média** | Tempo médio por visita (minutos) | Número | 8,5 |
-| **Sessões por Semana** | Frequência de acesso | Número | 3,2 |
-| **Dispositivos** | Quantos aparelhos diferentes usou | Número | 2 |
+---
 
 ### Temporal
 
-Quando o visitante acessa e o melhor momento para contatá-lo.
-
-| Campo | Descrição | Tipo | Exemplo |
-|-------|-----------|------|---------|
-| **Primeiro Acesso** | Data e hora da primeira visita | Data | 15/01/2026 |
-| **Última Atualização** | Quando o perfil foi atualizado | Data | 19/02/2026 |
-| **Melhor Hora** | Hora do dia mais ativa (0-23) | Número | 14 |
-| **Melhor Dia da Semana** | Dia mais ativo (Dom=0, Sáb=6) | Número | 2 (Terça) |
-
-<Tip>
-  O campo **Melhor Hora** é calculado automaticamente pela plataforma analisando o padrão de sessões do visitante. Use-o para agendar envio de SMS e emails no horário ideal.
-</Tip>
-
-### Preferências
-
-O que o visitante mais gosta e procura.
-
-| Campo | Descrição | Tipo | Exemplo |
-|-------|-----------|------|---------|
-| **Total de Page Views** | Quantas páginas viu no total | Número | 156 |
-| **Páginas Únicas** | Quantas páginas diferentes visitou | Número | 23 |
-| **Visitas Casino** | Acessos a páginas de cassino | Número | 12 |
-| **Visitas Sports** | Acessos a páginas esportivas | Número | 8 |
-| **Visitas Slots** | Acessos a páginas de slots | Número | 15 |
-
-<div className="callout-blue">
-  Campos de preferência por tipo de conteúdo (como Visitas Casino, Visitas Sports e Visitas Slots) ficam disponíveis de acordo com a categoria do seu negócio. Veja <a href="#campos-por-categoria-de-negócio">Campos por categoria</a> para mais detalhes.
-</div>
-
-### Navegação
-
-Dados detalhados sobre as páginas visitadas.
-
-| Campo | Descrição | Tipo |
-|-------|-----------|------|
-| **Páginas da Última Sessão** | Lista de páginas da sessão atual | Lista |
-| **Todas as Páginas Visitadas** | Histórico completo de páginas | Lista |
-
-<Tip>
-  Use "Páginas da Última Sessão *contém* /precos" para detectar visitantes que estão avaliando seus planos neste momento.
-</Tip>
-
-### Saldo em Tempo Real
-
-Monitoramento de saldo durante a sessão do visitante. Disponível para categorias de negócio que utilizam saldo em tempo real.
-
-| Campo | Descrição | Tipo | Exemplo |
-|-------|-----------|------|---------|
-| **Saldo Atual** | Saldo neste momento | Número | R\$ 200 |
-| **Saldo Início Sessão** | Saldo quando entrou | Número | R\$ 500 |
-| **Ganhou/Perdeu (R\$)** | Diferença na sessão | Número | -R\$ 300 |
-| **Ganhou/Perdeu (%)** | Variação percentual | Número | -60% |
-
-<div className="callout-blue">
-  Campos de Saldo em Tempo Real são atualizados apenas durante a sessão ativa do visitante e exigem integração com a plataforma do cliente.
-</div>
-
-### Intenção (Outputs de IA)
-
-Valores calculados automaticamente pela IA da UserIn. Veja a seção [Outputs: resultados de IA](#outputs-resultados-de-ia) para detalhes sobre como são calculados.
-
-| Campo | Descrição | Tipo | Exemplo |
-|-------|-----------|------|---------|
-| **Score de Intenção** | Probabilidade de converter (0-100) | Número | 78 |
-| **Nível de Intenção** | Classificação simplificada | Lista | Alto, Médio, Baixo |
-| **Próximo Passo** | Recomendação da IA | Texto | "Oferecer bônus de primeiro depósito" |
-
-<div className="callout-blue">
-  O Score de Intenção é recalculado diariamente e leva em conta: frequência de sessões, duração, páginas visitadas, estágio do visitante e padrão de navegação.
-</div>
-
-### Segmentos
-
-Segmentos são rótulos que **você controla**. Diferente dos outros campos que são calculados automaticamente, os segmentos são adicionados e removidos pelas suas jornadas e regras.
-
-| Operação | Descrição | Exemplo |
-|----------|-----------|---------|
-| **Tem Segmento** | Verifica se o visitante possui um segmento | Tem segmento "VIP" |
-| **Não Tem Segmento** | Verifica se NÃO possui um segmento | Não tem segmento "onboarding_completo" |
-
-Segmentos comuns:
-
-| Segmento | Uso |
-|----------|-----|
-| `vip` | Cliente de alto valor |
-| `churn_risk` | Risco de abandono |
-| `onboarding_completo` | Concluiu o fluxo inicial |
-| `carrinho_abandonado` | Deixou itens no carrinho |
-| `primeiro_deposito` | Acabou de fazer a primeira compra |
-
-### Contato
-
-Informações pessoais capturadas via formulário, integração ou API.
-
-| Campo | Descrição | Personalização |
-|-------|-----------|---------------|
-| **Nome** | Nome completo | `{{contact.firstName}}` |
-| **Sobrenome** | Apelido/último nome | `{{contact.lastName}}` |
-| **Email** | Endereço de email | `{{contact.email}}` |
-| **Telefone** | Número de telefone | `{{contact.phone}}` |
-
-### Jogos
-
-Dados de entidades conectadas ao perfil do visitante. Disponíveis para categorias de negócio que trabalham com catálogo de jogos.
-
-| Campo | Descrição | Personalização |
-|-------|-----------|---------------|
-| **Nome do Jogo** | Nome do jogo favorito | `{{game.name}}` |
-| **Categoria** | Tipo do jogo | `{{game.category}}` |
-| **Provedor** | Empresa que fornece o jogo | `{{game.provider}}` |
-| **URL** | Link para o jogo | `{{game.url}}` |
-| **RTP** | Percentual de retorno ao jogador | `{{game.rtp}}` |
+| Path | Label | Descrição |
+|------|-------|-----------|
+| `firstSeenAt` | Primeiro Acesso | Data e hora do primeiro registro no sistema |
+| `lastUpdatedAt` | Última Atualização | Data e hora da última atualização do perfil |
 
 ---
 
-## Sinais: interpretações inteligentes
+### Financeiro
 
-A UserIn não mostra apenas números crus. Ela **interpreta** os dados dos seus visitantes automaticamente para gerar insights que facilitam a tomada de decisão.
+| Path | Label | Descrição | Selecionável |
+|------|-------|-----------|:---:|
+| `deposits.ftd.amount` | Valor do 1º Depósito (R$) | Valor do primeiro depósito. Imutável após o registro. | ✓ |
+| `deposits.ftd.date` | Data do 1º Depósito | Data e hora do primeiro depósito. Imutável. | — |
 
-```mermaid
-flowchart TD
-    A["Dados Brutos\n(depósitos, sessões, páginas)"] --> B["Sinais\n(tier, tendência, melhor hora)"]
-    B --> C["Outputs\n(score de intenção, nível)"]
-    C --> D["Ações\n(regras, jornadas, modais)"]
+---
+
+### Comportamento
+
+| Path | Label | Descrição |
+|------|-------|-----------|
+| `behavior.lastActiveAt` | Última Atividade | Data e hora da última atividade registrada |
+
+---
+
+### Navegação
+
+| Path | Label | Descrição | Selecionável |
+|------|-------|-----------|:---:|
+| `navigation.lastSession.pages` | Páginas da Última Sessão | Lista de páginas visitadas na última sessão. Use "contém" para detectar uma página específica. | ✓ |
+
+<Tip>
+  Use **Páginas da Última Sessão contém /deposito** para disparar um modal em tempo real para visitantes que estão na tela de depósito neste momento.
+</Tip>
+
+---
+
+### Contato
+
+Informações pessoais vinculadas via integração ou formulário.
+
+| Path | Label | Variável Liquid | Selecionável |
+|------|-------|----------------|:---:|
+| `contact.firstName` | Nome | `{{ contact.firstName }}` | ✓ |
+| `contact.lastName` | Apelido | `{{ contact.lastName }}` | ✓ |
+| `contact.email` | Email | `{{ contact.email }}` | ✓ |
+| `contact.phone` | Telefone | `{{ contact.phone }}` | ✓ |
+
+<div className="callout-blue">
+  Campos de contato precisam chegar via integração (evento de identificação do tracker ou API REST). Sem o External ID vinculado ao perfil, esses campos não são preenchidos.
+</div>
+
+---
+
+### iGaming: Jogo favorito (objeto Game)
+
+Atributos do jogo vinculado ao perfil via integração de catálogo. Disponível para vertical `bets`.
+
+| Path | Label | Variável Liquid | Selecionável |
+|------|-------|----------------|:---:|
+| `game.name` | Nome do Jogo | `{{ game.name }}` | ✓ |
+| `game.category` | Categoria do Jogo | `{{ game.category }}` | ✓ |
+| `game.provider` | Provider do Jogo | `{{ game.provider }}` | ✓ |
+| `game.url` | URL do Jogo | `{{ game.url }}` | ✓ |
+| `game.rtp` | RTP % | `{{ game.rtp }}` | ✓ |
+
+**Exemplo de personalização:**
+```
+Olá, {{ contact.firstName }}! Que tal uma rodada no {{ game.name }}?
+Provider: {{ game.provider }} — RTP: {{ game.rtp }}%
 ```
 
-Sinais são **derivações** dos dados brutos. Eles respondem perguntas como "esse cliente está gastando mais ou menos?" ou "qual o melhor horário para falar com ele?".
+---
+
+### iGaming: Saldo de entrada na sessão
+
+Disponível para plataformas com integração de wallet ativa.
+
+| Path | Label | Descrição | Selecionável |
+|------|-------|-----------|:---:|
+| `balanceRealtime.current` | Saldo Atual (R$) | Saldo atual do visitante em tempo real na sessão | ✓ |
+| `balanceRealtime.sessionStart` | Saldo Início da Sessão (R$) | Saldo que o visitante tinha quando iniciou a sessão | ✓ |
+
+---
+
+## Agregados
+
+Calculados automaticamente pela plataforma somando, contando ou fazendo média de eventos. Não exigem configuração além da integração base.
+
+### Ciclo de vida
+
+| Path | Kind | Label | Valores | Selecionável |
+|------|------|-------|---------|:---:|
+| `stage` | AGG | Stage do Visitante | `anonymous` · `registered` · `ftd` · `mtd` | ✓ |
+
+| Valor | Quando ocorre | Estratégia |
+|-------|--------------|-----------|
+| **anonymous** | Visitante sem identificação | Capturar cadastro via modal |
+| **registered** | Criou conta, sem depósito | Ativar com bônus de boas-vindas |
+| **ftd** | Primeiro depósito realizado | Onboarding e engajamento inicial |
+| **mtd** | Segundo depósito em diante | Retenção, fidelização e upsell |
+
+<div className="callout-blue">
+  O stage nunca retrocede. Um visitante `ftd` permanece `ftd` mesmo que fique meses sem atividade. Use **Dias Desde Último Depósito** para identificar inativos dentro de cada stage.
+</div>
+
+---
+
+### Temporal
+
+| Path | Label | Descrição |
+|------|-------|-----------|
+| `bestTime.totalSessionsAnalyzed` | Sessões Analisadas | Quantidade de sessões usadas para calcular o melhor horário de contato |
+
+---
+
+### Financeiro
+
+| Path | Label | Descrição | Atualização |
+|------|-------|-----------|-------------|
+| `deposits.count` | Qtd. de Depósitos | Quantidade total de depósitos realizados | RT |
+| `deposits.total` | Total Depositado (R$) | Soma de todos os valores depositados | RT |
+| `deposits.average` | Ticket Médio (R$) | Valor médio por depósito (total ÷ count) | RT |
+| `deposits.last.amount` | Valor Último Depósito (R$) | Valor do depósito mais recente | RT |
+| `deposits.last.date` | Data Último Depósito | Data e hora do último depósito | RT |
+| `deposits.weekly.avgAmountPerWeek` | Média Valor/Semana (R$) | Média de valor depositado por semana | Diária |
+| `deposits.weekly.avgCountPerWeek` | Média Depósitos/Semana | Média de quantidade de depósitos por semana | Diária |
+| `deposits.last5Weeks.count` | Depósitos (Últ. 5 Semanas) | Quantidade de depósitos nas últimas 5 semanas | Diária |
+| `deposits.last5Weeks.total` | Total (Últ. 5 Semanas) (R$) | Valor total depositado nas últimas 5 semanas | Diária |
+
+<Tip>
+  Compare **Total Depositado** com **Total (Últ. 5 Semanas)** para detectar jogadores que estavam ativos mas reduziram volume recentemente, sem esperar pelos sinais de tendência.
+</Tip>
+
+---
+
+### Comportamento
+
+| Path | Label | Descrição | Atualização |
+|------|-------|-----------|-------------|
+| `behavior.totalSessions` | Total de Sessões | Quantidade total de sessões desde o primeiro acesso | Diária |
+| `behavior.deviceCount` | Qtd. de Dispositivos | Quantidade de dispositivos diferentes usados | Diária |
+
+---
+
+### Preferências e jogos
+
+| Path | Label | Descrição | Vertical | Atualização |
+|------|-------|-----------|----------|-------------|
+| `favoriteGame.visits` | Jogo Favorito (Visitas) | Quantidade de visitas ao jogo mais acessado | Todas | Diária |
+| `preferences.totalPageViews` | Total de Page Views | Total de visualizações de página | Todas | Diária |
+| `preferences.uniquePages` | Páginas Únicas Visitadas | Quantidade de páginas únicas visitadas | Todas | Diária |
+| `preferences.categories.casino` | Visitas Casino | Acessos a páginas de cassino | bets | Diária |
+| `preferences.categories.sports` | Visitas Sports | Acessos a páginas de apostas esportivas | bets | Diária |
+| `preferences.categories.slots` | Visitas Slots | Acessos a páginas de slots | bets | Diária |
+
+---
+
+### Navegação
+
+| Path | Label | Descrição | Atualização |
+|------|-------|-----------|-------------|
+| `navigation.allVisitedPages` | Todas as Páginas Visitadas | Lista de todas as URLs únicas já visitadas | Diária |
+
+---
+
+### iGaming: Saldo em tempo real
+
+| Path | Label | Descrição | Atualização |
+|------|-------|-----------|-------------|
+| `balanceRealtime.variationCount` | Vezes que Saldo Mudou | Número de vezes que o saldo variou na sessão (apostas e ganhos) | RT |
+
+---
+
+### iGaming: Apostas — `betting`
+
+Métricas de apostas com saldo real. Disponível para vertical `bets`.
+
+**All-time e janelas longas:**
+
+| Path | Label | Descrição | Janela |
+|------|-------|-----------|--------|
+| `betting.totalBetAmount` | Total Apostado (R$) | Soma total de apostas com saldo real | All-time |
+| `betting.totalWinAmount` | Total Ganho (R$) | Soma total de ganhos com saldo real | All-time |
+| `betting.totalGGR` | GGR Total (R$) | Gross Gaming Revenue acumulado (totalBetAmount − totalWinAmount) | All-time |
+| `betting.betCount` | Qtd. Apostas | Quantidade total de apostas realizadas | All-time |
+| `betting.winCount` | Qtd. Wins | Quantidade total de rodadas ganhas | All-time |
+| `betting.lossCount` | Qtd. Losses | Quantidade total de rodadas perdidas | All-time |
+| `betting.freespinCount` | Qtd. Freespins | Quantidade total de rodadas grátis utilizadas | All-time |
+| `betting.freespinWinAmount` | Ganho em Freespin (R$) | Total ganho em rodadas grátis | All-time |
+| `betting.last5Weeks.betAmount` | Apostado Últ. 5 Sem (R$) | Total apostado nas últimas 5 semanas | 5 semanas |
+| `betting.last5Weeks.ggr` | GGR Últ. 5 Sem (R$) | GGR nas últimas 5 semanas | 5 semanas |
+
+**Janelas curtas (comportamento recente e em sessão):**
+
+| Path | Label | Descrição | Janela |
+|------|-------|-----------|--------|
+| `betting.last1h.lossCount` | Losses Últ. 1h | Quantidade de perdas na última hora | 1 hora |
+| `betting.last1h.winCount` | Wins Últ. 1h | Quantidade de wins na última hora | 1 hora |
+| `betting.last1h.betAmount` | Apostado Últ. 1h (R$) | Total apostado na última hora | 1 hora |
+| `betting.last24h.betAmount` | Apostado Últ. 24h (R$) | Total apostado nas últimas 24 horas | 24 horas |
+| `betting.last24h.ggr` | GGR Últ. 24h (R$) | GGR nas últimas 24 horas | 24 horas |
+| `betting.last.game` | Último Jogo | Nome do último jogo apostado | RT |
+| `betting.last.provider` | Último Provider | Provider do último jogo apostado | RT |
+
+<div className="callout-blue">
+  Os campos de janela curta (`last1h`, `last24h`) são fundamentais para detectar comportamentos de risco em tempo real dentro da sessão. Use-os combinados com os sinais de frustração para acionar intervenções imediatas.
+</div>
+
+---
+
+## Sinais
+
+Derivações calculadas pela plataforma a partir dos dados brutos. Cada sinal usa janela temporal, threshold ou lógica específica para responder uma pergunta de negócio.
+
+### Temporal — melhor horário de contato
 
 <AccordionGroup>
-  <Accordion title="Tier de Depósitos" icon="layer-group">
-    Classifica o visitante por faixa de valor total gasto:
+  <Accordion title="Melhor Hora do Dia" icon="clock">
+    **Path:** `bestTime.bestHour`
 
-    | Tier | Faixa de Valor | Significado |
-    |------|---------------|-------------|
-    | **None** | R\$ 0 | Nunca comprou |
-    | **Low** | R\$ 1 - R\$ 100 | Comprador inicial |
-    | **Medium** | R\$ 100 - R\$ 500 | Comprador moderado |
-    | **High** | R\$ 500 - R\$ 2.000 | Comprador de alto valor |
-    | **Whale** | R\$ 2.000+ | Comprador premium |
+    Hora do dia (0–23) em que o visitante mais costuma acessar a plataforma.
 
-    **Atualizado:** em tempo real, a cada nova transação.
+    **Como é calculado:** Moda das horas de início de sessão, analisando o histórico completo de sessões.
 
-    **Exemplo de uso:** Exibir modal VIP automaticamente quando o tier mudar para "High" ou "Whale".
+    **Atualização:** Diária.
+
+    **Uso:** Agendar envio de SMS e email no horário de pico individual de cada visitante.
   </Accordion>
 
-  <Accordion title="Tendência de Depósitos" icon="chart-line">
-    Analisa se os gastos do visitante estão subindo, estáveis ou caindo nas últimas semanas:
+  <Accordion title="Melhor Dia da Semana" icon="calendar-week">
+    **Path:** `bestTime.bestDayHour.dayOfWeek`
 
-    | Tendência | Significado |
-    |-----------|-------------|
-    | **Aumentando** | Gastando mais que o habitual |
-    | **Estável** | Mantendo o padrão |
-    | **Diminuindo** | Gastando menos que o habitual |
+    Dia da semana preferido do visitante (0=Domingo, 6=Sábado).
 
-    **Atualizado:** semanalmente, analisando as últimas 5 semanas.
+    **Como é calculado:** Moda dos dias de início de sessão no histórico completo.
 
-    **Exemplo de uso:** Se a tendência é "Diminuindo" e o tier é "High", disparar campanha de retenção.
+    **Atualização:** Diária.
+
+    **Uso:** Concentrar campanhas nos dias de maior receptividade por visitante.
   </Accordion>
 
-  <Accordion title="Melhor Horário de Contato" icon="clock">
-    Calcula automaticamente a hora do dia e o dia da semana em que o visitante mais acessa seu site:
+  <Accordion title="Nome do Melhor Dia" icon="calendar">
+    **Path:** `bestTime.bestDayHour.dayName`
 
-    - **Melhor Hora:** 0-23 (ex: 14 = 14h)
-    - **Melhor Dia:** Domingo a Sábado
+    Nome legível do dia da semana preferido (ex: "Segunda").
 
-    **Atualizado:** diariamente, analisando o histórico de sessões.
+    **Como é calculado:** Derivado de `bestTime.bestDayHour.dayOfWeek`.
 
-    **Exemplo de uso:** Agendar envio de SMS promocional no horário em que o visitante está mais ativo.
+    **Uso:** Personalização de mensagens via Liquid: "Você costuma jogar às `{{ bestTime.bestHour }}`h nas `{{ bestTime.bestDayHour.dayName }}`s".
   </Accordion>
 
-  <Accordion title="Dias Desde Último Depósito" icon="calendar-days">
-    Conta automaticamente quantos dias se passaram desde a última transação. Aumenta a cada dia que passa sem compra.
+  <Accordion title="Horário Proposto para Contato" icon="calendar-clock">
+    **Path:** `bestTime.proposedContactLocal`
 
-    **Atualizado:** em tempo real (calculado dinamicamente).
+    Combinação formatada do melhor dia e hora (ex: "Segunda às 14:00").
 
-    **Exemplo de uso:** Se dias desde último depósito é maior que 30, adicionar segmento "inativo" e iniciar jornada de reativação.
-  </Accordion>
+    **Como é calculado:** Derivado de `bestTime.bestHour` + `bestTime.bestDayHour.dayOfWeek`.
 
-  <Accordion title="Variação de Saldo na Sessão" icon="arrow-trend-down">
-    Para plataformas que monitoram saldo em tempo real, acompanha quanto o visitante ganhou ou perdeu na sessão atual:
+    **Atualização:** Diária.
 
-    - **Valor (R\$):** diferença entre saldo atual e inicial
-    - **Percentual (%):** variação relativa
-
-    **Atualizado:** em tempo real durante a sessão.
-
-    **Exemplo de uso:** Se perdeu mais de 50% do saldo, exibir modal com alerta personalizado.
+    **Uso:** Exibir em painéis de CRM para que agentes saibam o melhor momento de contato sem precisar calcular manualmente.
   </Accordion>
 </AccordionGroup>
 
 ---
 
-## Outputs: resultados de IA
+### Financeiro
 
-Outputs são o nível mais sofisticado de análise. Eles combinam **múltiplos sinais e dados** usando modelos de inteligência artificial para produzir uma avaliação final.
+<AccordionGroup>
+  <Accordion title="Dias Desde Último Depósito" icon="calendar-days">
+    **Path:** `deposits.daysSinceLastDeposit`
 
-### Score de Intenção
+    Contador dinâmico de quantos dias se passaram desde o último depósito.
 
-O output principal da UserIn. Um número de **0 a 100** que representa a probabilidade do visitante converter (fazer uma compra, se registrar, etc.).
+    **Como é calculado:** Data atual menos `deposits.last.date`. Aumenta automaticamente a cada dia sem depósito.
 
-<CardGroup cols={3}>
-  <Card title="0-39: Baixa" icon="circle-arrow-down">
-    Visitante casual ou desinteressado. Poucas sessões, pouco engajamento.
-  </Card>
-  <Card title="40-69: Média" icon="circle-arrow-right">
-    Demonstra interesse mas ainda não decidiu. Visitando páginas relevantes com alguma frequência.
-  </Card>
-  <Card title="70-100: Alta" icon="circle-arrow-up">
-    Alta probabilidade de converter. Engajamento consistente, múltiplas sessões, explorando conteúdo de conversão.
-  </Card>
-</CardGroup>
+    **Atualização:** RT (calculado no momento da avaliação da condição).
 
-#### Como é calculado?
+    **Uso:**
+    - > 7 dias: modal de incentivo suave
+    - > 14 dias: SMS com oferta de retorno
+    - > 30 dias: jornada de reativação completa
+    - > 60 dias: sinalizar como churned para o CRM
+  </Accordion>
 
-O score considera automaticamente:
+  <Accordion title="Tier de Depósitos" icon="layer-group">
+    **Path:** `deposits.tier`
 
-| Fator | Peso | Exemplo |
-|-------|------|---------|
-| **Estágio do visitante** | Alto | Registrado vale mais que anônimo |
-| **Sessões por semana** | Médio | Mais sessões = mais interesse |
-| **Duração das sessões** | Médio | Visitas longas indicam engajamento |
-| **Páginas visitadas** | Médio | Diversidade de páginas exploradas |
-| **Recência** | Alto | Visita recente vale mais |
+    Classifica o visitante por faixa de valor total depositado.
 
-<div className="callout-blue">
-  O Score de Intenção é recalculado **diariamente** para cada visitante ativo. Visitantes sem sessão recente vão perdendo score gradualmente.
-</div>
+    **Como é calculado:** Com base em `deposits.total`:
 
-### Nível de Intenção
+    | Tier | Faixa | Perfil |
+    |------|-------|--------|
+    | **none** | R$ 0 | Nunca depositou |
+    | **low** | R$ 1 a R$ 100 | Jogador inicial |
+    | **medium** | R$ 100 a R$ 500 | Jogador regular |
+    | **high** | R$ 500 a R$ 2.000 | Alto valor, candidato a VIP |
+    | **whale** | Acima de R$ 2.000 | Premium, tratamento diferenciado |
 
-Versão simplificada do score, em 3 categorias:
+    **Atualização:** Diária.
+  </Accordion>
 
-| Nível | Score | Uso recomendado |
-|-------|-------|-----------------|
-| **Alto** | 70-100 | Prioridade máxima. Ofereça conversão imediata. |
-| **Médio** | 40-69 | Nutra com conteúdo relevante. |
-| **Baixo** | 0-39 | Evite comunicação agressiva. |
+  <Accordion title="Tendência de Depósitos" icon="chart-line">
+    **Path:** `deposits.trend`
 
-### Próximo Passo (Next Step)
+    Indica se o padrão geral de depósitos está crescendo, estável ou caindo.
 
-Uma recomendação textual gerada pela IA sobre qual ação tomar com o visitante. Exemplos:
+    **Como é calculado:** Análise das últimas 5 semanas de depósitos. Variação > +20% = increasing; < -20% = decreasing; entre = stable.
 
-- *"Oferecer bônus de primeiro depósito"*
-- *"Enviar lembrete de carrinho abandonado"*
-- *"Apresentar programa VIP"*
-- *"Risco de churn, ativar retenção"*
+    | Valor | Interpretação | Ação |
+    |-------|--------------|------|
+    | **increasing** | Jogador em crescimento | Momento de upsell |
+    | **stable** | Padrão mantido | Manter engajamento |
+    | **decreasing** | Sinal de risco | Iniciar retenção |
+    | **unknown** | Dados insuficientes | Aguardar mais sessões |
+
+    **Atualização:** Diária, janela de 5 semanas.
+  </Accordion>
+
+  <Accordion title="Tendência (Últ. 5 Semanas)" icon="chart-bar">
+    **Path:** `deposits.last5Weeks.trend`
+
+    Comparação específica das últimas 5 semanas com as 5 semanas anteriores.
+
+    **Valores:** `up` · `down` · `stable` · `none`
+
+    **Como é calculado:** Compara `deposits.last5Weeks.count` e `deposits.last5Weeks.total` com o período equivalente anterior.
+
+    **Atualização:** Diária.
+
+    **Uso:** Mais sensível que `deposits.trend` para detectar mudanças recentes de comportamento.
+  </Accordion>
+</AccordionGroup>
+
+---
+
+### Comportamento
+
+<AccordionGroup>
+  <Accordion title="Sessões por Semana" icon="calendar-check">
+    **Path:** `behavior.sessionsPerWeek`
+
+    Média de sessões por semana do visitante.
+
+    **Como é calculado:** `behavior.totalSessions` ÷ semanas desde `firstSeenAt`.
+
+    **Atualização:** Diária.
+
+    **Uso:** Principal indicador de engajamento. Acima de 5 sessões/semana indica visitante altamente ativo.
+  </Accordion>
+
+  <Accordion title="Duração Média da Sessão" icon="timer">
+    **Path:** `behavior.avgSessionDurationMinutes`
+
+    Tempo médio por sessão, em minutos.
+
+    **Como é calculado:** Média da duração de todas as sessões registradas pelo tracker.
+
+    **Atualização:** Diária.
+
+    **Uso:** Sessões acima de 30 minutos combinadas com losses frequentes ativam o protocolo de jogo responsável.
+  </Accordion>
+
+  <Accordion title="Dias Inativo" icon="moon">
+    **Path:** `daysInactive`
+
+    Dias sem qualquer atividade na plataforma (não apenas depósitos).
+
+    **Como é calculado:** Data atual menos `behavior.lastActiveAt`. Calculado dinamicamente.
+
+    **Atualização:** RT.
+
+    **Uso:** Diferente de "Dias Desde Último Depósito" (que foca em transações), este campo captura inatividade total, incluindo visitantes que entram mas não depositam.
+  </Accordion>
+
+  <Accordion title="Dias Desde Criação" icon="user-clock">
+    **Path:** `daysSinceCreation`
+
+    Quantidade de dias desde que o perfil foi criado no sistema.
+
+    **Como é calculado:** Data atual menos `firstSeenAt`. Calculado dinamicamente.
+
+    **Atualização:** RT.
+
+    **Uso:** Identificar visitantes registrados há muito tempo que nunca converteram em `ftd`.
+  </Accordion>
+</AccordionGroup>
+
+---
+
+### Preferências — jogo favorito
+
+<AccordionGroup>
+  <Accordion title="Nome do Jogo Favorito" icon="gamepad">
+    **Path:** `favoriteGame.name`
+
+    Nome do jogo ou produto mais visitado pelo jogador.
+
+    **Como é calculado:** Análise de page views por jogo. O jogo com mais acessos se torna o favorito.
+
+    **Atualização:** Diária.
+
+    **Uso:** Personalização de mensagens com `{{ favoriteGame.name }}`.
+  </Accordion>
+
+  <Accordion title="URL do Jogo Favorito" icon="link">
+    **Path:** `favoriteGame.url`
+
+    URL ou path do jogo favorito (ex: `/games/aviator`).
+
+    **Como é calculado:** Derivado de `favoriteGame.name` via análise de navegação.
+
+    **Atualização:** Diária.
+
+    **Uso:** Criar CTAs com link direto para o jogo favorito em modais e SMS.
+  </Accordion>
+
+  <Accordion title="Categoria do Jogo Favorito" icon="tag">
+    **Path:** `favoriteGame.category`
+
+    Categoria do jogo favorito (ex: `slots`, `crash`, `casino`, `live`).
+
+    **Como é calculado:** Derivado de `favoriteGame.name`.
+
+    **Atualização:** Diária.
+
+    **Uso:** Segmentar visitantes por vertical preferida sem precisar comparar contadores de visitas individuais.
+  </Accordion>
+</AccordionGroup>
+
+---
+
+### iGaming: Saldo em tempo real
+
+<AccordionGroup>
+  <Accordion title="Ganhou/Perdeu na Sessão (R$)" icon="arrow-trend-down">
+    **Path:** `balanceRealtime.sessionNetChange`
+
+    Diferença em reais entre o saldo atual e o saldo de início da sessão.
+
+    **Fórmula:** `balanceRealtime.current` − `balanceRealtime.sessionStart`
+
+    Positivo = ganhou. Negativo = perdeu.
+
+    **Atualização:** RT, durante a sessão ativa.
+  </Accordion>
+
+  <Accordion title="Ganhou/Perdeu na Sessão (%)" icon="percent">
+    **Path:** `balanceRealtime.sessionNetChangePercent`
+
+    Variação percentual do saldo na sessão atual.
+
+    **Fórmula:** (`balanceRealtime.current` − `balanceRealtime.sessionStart`) ÷ `balanceRealtime.sessionStart` × 100
+
+    Ex: -50 significa que perdeu 50% do saldo inicial.
+
+    **Atualização:** RT, durante a sessão ativa.
+
+    **Uso:** Acionar intervenção de jogo responsável quando < -50%.
+  </Accordion>
+
+  <Accordion title="Sequência de Perdas" icon="arrow-down">
+    **Path:** `balanceRealtime.isLosingStreak`
+
+    Indica se o visitante perdeu 3 ou mais vezes seguidas na sessão atual.
+
+    **Lógica:** `balanceRealtime.variationCount` com 3+ variações negativas consecutivas.
+
+    **Atualização:** RT.
+
+    **Uso:** Exibir mensagem de pausa ou jogo responsável antes que as perdas se acumulem.
+  </Accordion>
+
+  <Accordion title="Saldo Chegou a Zero" icon="circle-xmark">
+    **Path:** `balanceRealtime.hitZeroThisSession`
+
+    Indica se o saldo do visitante chegou a zero durante esta sessão.
+
+    **Lógica:** `balanceRealtime.current` = 0 em qualquer momento da sessão.
+
+    **Atualização:** RT.
+
+    **Uso:** Exibir oferta de recarga ou mensagem de encerramento de sessão.
+  </Accordion>
+
+  <Accordion title="Perdeu 50%+ do Saldo" icon="battery-half">
+    **Path:** `balanceRealtime.alert50Triggered`
+
+    Indica se o visitante já perdeu 50% ou mais do saldo inicial da sessão.
+
+    **Lógica:** `balanceRealtime.sessionNetChangePercent` ≤ −50.
+
+    **Atualização:** RT.
+
+    **Uso:** Gatilho principal de alerta de jogo responsável. Aciona antes da perda total.
+  </Accordion>
+
+  <Accordion title="Perdeu 80%+ do Saldo" icon="battery-low">
+    **Path:** `balanceRealtime.alert80Triggered`
+
+    Indica se o visitante já perdeu 80% ou mais do saldo inicial da sessão.
+
+    **Lógica:** `balanceRealtime.sessionNetChangePercent` ≤ −80.
+
+    **Atualização:** RT.
+
+    **Uso:** Gatilho de intervenção crítica. Exibir modal obrigatório de pausa ou suporte.
+  </Accordion>
+</AccordionGroup>
+
+---
+
+### iGaming: Jogo favorito
+
+<AccordionGroup>
+  <Accordion title="Volatilidade do Jogo" icon="wave-sine">
+    **Path:** `game.volatility`
+
+    Nível de volatilidade do jogo favorito do visitante.
+
+    **Valores:** `low` · `medium` · `high`
+
+    **Como é calculado:** Derivado do atributo de catálogo do jogo (configurado na integração).
+
+    **Uso:** Personalizar sugestões de jogos. Visitantes com histórico de `alert80Triggered` e jogo de volatilidade `high` têm maior risco de frustração.
+  </Accordion>
+</AccordionGroup>
+
+---
+
+### iGaming: Apostas — comportamento e frustração
+
+<AccordionGroup>
+  <Accordion title="Tier de Aposta" icon="layer-group">
+    **Path:** `betting.tier`
+
+    Classifica o jogador por volume total apostado.
+
+    **Como é calculado:** Com base em `betting.totalBetAmount`:
+
+    | Tier | Faixa | Perfil |
+    |------|-------|--------|
+    | **casual** | Até R$ 1.000 | Jogador esporádico |
+    | **regular** | R$ 1.000 a R$ 10.000 | Jogador consistente |
+    | **high_roller** | R$ 10.000 a R$ 100.000 | Alto volume de apostas |
+    | **whale** | Acima de R$ 100.000 | Volume máximo, tratamento premium |
+
+    **Atualização:** Diária.
+
+    <div className="callout-blue">
+      **Tier de Aposta** (`betting.tier`) é diferente de **Tier de Depósitos** (`deposits.tier`). O primeiro mede volume apostado; o segundo mede valor depositado. Um jogador pode ser `high_roller` em apostas e `low` em depósitos se jogar com freespins.
+    </div>
+  </Accordion>
+
+  <Accordion title="Taxa de Win (%)" icon="percent">
+    **Path:** `betting.winRate`
+
+    Percentual de rodadas ganhas sobre o total de apostas.
+
+    **Fórmula:** `betting.winCount` ÷ `betting.betCount` × 100
+
+    **Atualização:** Diária.
+
+    **Uso:** Jogadores com winRate abaixo de 15% estão perdendo consistentemente, indicador de possível frustração acumulada.
+  </Accordion>
+
+  <Accordion title="Sequência de Perdas (Apostas)" icon="arrow-down-right">
+    **Path:** `betting.frustration.isOnLosingStreak`
+
+    Indica se o jogador teve mais de 3 perdas na última hora.
+
+    **Lógica:** `betting.last1h.lossCount` > 3
+
+    **Atualização:** RT, janela de 1 hora.
+
+    **Uso:** Acionar intervenção imediata de jogo responsável ou oferta de freespin para reverter o humor.
+  </Accordion>
+
+  <Accordion title="Nível de Frustração" icon="face-angry">
+    **Path:** `betting.frustration.level`
+
+    Classifica o grau de frustração do jogador com base em perdas recentes.
+
+    **Como é calculado:** Com base em `betting.last1h.lossCount`:
+
+    | Nível | Perdas na última hora | Protocolo |
+    |-------|----------------------|-----------|
+    | **none** | 0 a 3 | Nenhuma ação |
+    | **mild** | 3 a 8 | Monitorar |
+    | **moderate** | 8 a 15 | Exibir mensagem de pausa |
+    | **high** | 15 a 30 | Modal de jogo responsável |
+    | **critical** | Acima de 30 | Intervenção obrigatória |
+
+    **Atualização:** RT, janela de 1 hora.
+  </Accordion>
+
+  <Accordion title="Resultado da Sessão" icon="chart-pie">
+    **Path:** `betting.frustration.sessionResult`
+
+    Avalia se o jogador está ganhando ou perdendo na sessão atual com base no GGR.
+
+    **Como é calculado:** Com base em `betting.last24h.ggr` (GGR negativo = jogador ganhando; positivo = operador ganhando):
+
+    | Resultado | GGR 24h | Interpretação |
+    |-----------|---------|---------------|
+    | **winning** | Abaixo de -R$ 10 | Jogador está ganhando |
+    | **breaking_even** | Entre -R$ 10 e R$ 10 | Neutro |
+    | **losing_mild** | R$ 10 a R$ 100 | Perdendo levemente |
+    | **losing_heavy** | Acima de R$ 100 | Perdendo pesado |
+
+    **Atualização:** RT.
+  </Accordion>
+
+  <Accordion title="Satisfação Estimada" icon="face-smile">
+    **Path:** `betting.experience.satisfaction`
+
+    Estimativa da satisfação do jogador com a experiência de jogo, baseada no winRate histórico.
+
+    **Como é calculado:** Com base em `betting.winRate`:
+
+    | Nível | Win Rate | Estado estimado |
+    |-------|---------|----------------|
+    | **frustrated** | 0% a 15% | Perdendo consistentemente |
+    | **dissatisfied** | 15% a 30% | Abaixo do esperado |
+    | **neutral** | 30% a 45% | Neutro |
+    | **satisfied** | 45% a 60% | Experiência positiva |
+    | **delighted** | Acima de 60% | Muito satisfeito |
+
+    **Atualização:** Diária.
+
+    **Uso:** Personalizar o tom das comunicações. Não ofereça "venha jogar mais!" para jogadores `frustrated`.
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Outputs
+
+Calculados pela plataforma combinando múltiplos campos com pesos definidos. São os campos mais sofisticados: não descrevem o que aconteceu, mas recomendam o que fazer.
+
+### Intenção — probabilidade de conversão
+
+<AccordionGroup>
+  <Accordion title="Score de Intenção (0-100)" icon="bullseye">
+    **Path:** `intention.score`
+
+    Probabilidade de o visitante converter (depositar, se registrar, ou realizar a ação principal do negócio).
+
+    **Como é calculado:** Score ponderado combinando:
+
+    | Fator | Peso | Lógica |
+    |-------|------|--------|
+    | Stage do visitante | Alto | `ftd` e `mtd` pontuam mais que `anonymous` |
+    | Recência de sessão | Alto | Sessão nas últimas 24h vale mais |
+    | Sessões por semana | Médio | Frequência indica interesse ativo |
+    | Duração das sessões | Médio | Sessões longas = engajamento real |
+    | Diversidade de páginas | Médio | Explorar muitas páginas = intenção de compra |
+
+    **Atualização:** Diária.
+
+    | Faixa | Nível | Estratégia |
+    |-------|-------|-----------|
+    | 70-100 | Alto | Converter imediatamente com oferta direta |
+    | 40-69 | Médio | Nutrir com conteúdo relevante |
+    | 0-39 | Baixo | Não pressionar; engajamento leve |
+
+    <div className="callout-blue">
+      O Score de Intenção é calculado uma vez por dia. Para condições em tempo real (visitante está na tela de depósito agora), combine com **Páginas da Última Sessão**.
+    </div>
+  </Accordion>
+
+  <Accordion title="Nível de Intenção" icon="signal">
+    **Path:** `intention.level`
+
+    Versão simplificada do score em 3 categorias.
+
+    **Valores:** `high` (score ≥ 70) · `medium` (40–69) · `low` (< 40)
+
+    **Uso:** Ideal para condições diretas em regras sem precisar calibrar thresholds numéricos.
+  </Accordion>
+
+  <Accordion title="Próximo Passo" icon="arrow-right">
+    **Path:** `intention.nextStep`
+
+    Próximo passo esperado do visitante no funil.
+
+    **Exemplos de valores:** `first_deposit` · `second_deposit`
+
+    **Uso:** Exibir em painéis de CRM para orientar abordagens personalizadas por estágio.
+  </Accordion>
+</AccordionGroup>
+
+---
+
+### Tags — rótulos dinâmicos
+
+<AccordionGroup>
+  <Accordion title="Tags do Usuário" icon="tags">
+    **Path:** `tags`
+
+    Array de rótulos aplicados ao visitante via regras, jornadas ou manualmente.
+
+    **Como é preenchido:** Adicionadas e removidas pelas ações definidas nas suas jornadas e regras.
+
+    **Atualização:** Em tempo real, sempre que uma ação de tag é executada.
+
+    | Operação | Exemplo |
+    |----------|---------|
+    | **Tem Tag** | `tags` contém "vip" |
+    | **Não Tem Tag** | `tags` não contém "bonus_elegivel" |
+
+    Exemplos de tags comuns:
+
+    | Tag | Quando aplicar |
+    |-----|---------------|
+    | `vip` | Total Depositado > R$ 2.000 |
+    | `churn_risk` | Dias Desde Último Depósito > 30 |
+    | `bonus_elegivel` | Sem depósito nos últimos 7 dias |
+    | `onboarding_completo` | Stage = `mtd` |
+    | `jogo_responsavel` | `alert80Triggered` = verdadeiro |
+  </Accordion>
+</AccordionGroup>
+
+---
+
+### iGaming: Valor e retenção do jogador — `betting`
+
+<AccordionGroup>
+  <Accordion title="Score de Valor do Jogador (0-100)" icon="dollar-sign">
+    **Path:** `betting.playerValue.score`
+
+    Avalia o valor financeiro real do jogador para a operação com base em GGR e frequência.
+
+    **Inputs:** GGR total (40%), quantidade de apostas (30%), apostado nas últimas 24h (30%).
+
+    **Atualização:** Diária.
+  </Accordion>
+
+  <Accordion title="Tier VIP" icon="crown">
+    **Path:** `betting.playerValue.tier`
+
+    Classificação VIP derivada do Score de Valor do Jogador.
+
+    | Tier | Score | Benefício sugerido |
+    |------|-------|-------------------|
+    | **bronze** | 0-20 | Acesso básico |
+    | **silver** | 20-40 | Bônus mensais |
+    | **gold** | 40-60 | Cashback e suporte prioritário |
+    | **platinum** | 60-80 | Gerente de conta + exclusivos |
+    | **diamond** | 80-100 | Tratamento máximo |
+
+    **Atualização:** Diária.
+  </Accordion>
+
+  <Accordion title="Risco de Churn iGaming (0-100)" icon="triangle-exclamation">
+    **Path:** `betting.retention.churnRisk`
+
+    Score de risco de abandono específico para comportamento de apostas. Quanto maior, maior o risco.
+
+    **Inputs:** Nível de frustração (35%), dias inativo (30%), satisfação estimada (20%), volume apostado nas últimas 5 semanas (15%).
+
+    | Score | Nível | Ação |
+    |-------|-------|------|
+    | 0-24 | safe | Nenhuma ação |
+    | 25-49 | watch | Monitorar |
+    | 50-74 | danger | Jornada de retenção |
+    | 75-100 | critical | Intervenção imediata |
+
+    **Atualização:** Diária.
+  </Accordion>
+
+  <Accordion title="Nível de Churn iGaming" icon="gauge">
+    **Path:** `betting.retention.churnLevel`
+
+    Classificação do risco de churn derivada de `betting.retention.churnRisk`.
+
+    **Valores:** `safe` · `watch` · `danger` · `critical`
+
+    **Uso:** Mais simples de usar em condições de jornada que o score numérico.
+  </Accordion>
+
+  <Accordion title="Urgência de Retenção" icon="bell">
+    **Path:** `betting.retention.urgency`
+
+    Define com que urgência o time de CRM deve agir para reter o jogador.
+
+    **Como é calculado:** Combina `betting.retention.churnLevel` com `betting.playerValue.tier`.
+
+    | Valor | Interpretação |
+    |-------|--------------|
+    | **no_action** | Nenhuma ação necessária agora |
+    | **monitor** | Acompanhar nos próximos dias |
+    | **act_soon** | Agir nos próximos dias |
+    | **act_now** | Ação imediata necessária |
+
+    **Atualização:** Diária.
+  </Accordion>
+
+  <Accordion title="Melhor Ação de Retenção" icon="wand-magic-sparkles">
+    **Path:** `betting.retention.bestAction`
+
+    Ação de retenção recomendada com base no perfil de frustração e valor do jogador.
+
+    **Como é calculado:** Combina `betting.frustration.level`, `betting.playerValue.tier` e `betting.retention.churnLevel`.
+
+    | Valor | Quando usar |
+    |-------|-------------|
+    | **bonus_offer** | Jogador regular com churn moderado |
+    | **freespin_offer** | Jogador frustrado com frustração `moderate` |
+    | **cashback** | High roller ou whale com churn alto |
+    | **personal_contact** | Tier `platinum` ou `diamond` com urgência `act_now` |
+    | **vip_upgrade** | Jogador prestes a subir de tier |
+    | **no_action** | Nenhuma ação necessária |
+
+    **Atualização:** Diária.
+  </Accordion>
+
+  <Accordion title="Próxima Ação" icon="arrow-right">
+    **Path:** `betting.nextBestAction.action`
+
+    Descrição textual da ação recomendada pelo engine de decisão.
+
+    **Como é calculado:** Derivado de `betting.retention.bestAction` combinado com `betting.frustration.level`.
+
+    **Uso:** Exibir em painéis de CRM para orientar agentes no contato com o jogador.
+  </Accordion>
+
+  <Accordion title="Canal Recomendado" icon="broadcast-tower">
+    **Path:** `betting.nextBestAction.channel`
+
+    Canal ideal para executar a ação de retenção.
+
+    **Como é calculado:** Combina `betting.frustration.level` com `betting.retention.urgency`.
+
+    | Valor | Canal |
+    |-------|-------|
+    | **onsite_modal** | Modal exibido na plataforma enquanto o jogador está ativo |
+    | **push** | Notificação push no dispositivo |
+    | **sms** | Mensagem de texto |
+    | **email** | Email |
+    | **whatsapp** | WhatsApp |
+
+    **Atualização:** Diária.
+  </Accordion>
+
+  <Accordion title="Quando Agir" icon="clock">
+    **Path:** `betting.nextBestAction.timing`
+
+    Timing recomendado para executar a ação de retenção.
+
+    | Valor | Interpretação |
+    |-------|--------------|
+    | **immediate** | Agir agora, ainda na sessão |
+    | **next_session** | Na próxima vez que o jogador entrar |
+    | **next_day** | Nas próximas 24 horas |
+    | **next_week** | Na próxima semana |
+
+    **Como é calculado:** Derivado de `betting.retention.urgency`.
+
+    **Atualização:** Diária.
+  </Accordion>
+</AccordionGroup>
 
 ---
 
 ## Sinais customizados
 
-Além dos sinais do sistema, você pode **criar seus próprios sinais** no Painel de Ontologia:
+Além dos sinais do sistema, você pode criar seus próprios sinais no Painel de Ontologia para capturar lógicas de negócio específicas da sua operação.
 
 <Steps>
   <Step title="Acesse Estrutura de automações no menu lateral">
-    Navegue até o Painel de Ontologia.
+    Navegue até o Painel de Ontologia dentro de Estrutura de automações.
   </Step>
   <Step title="Crie um novo Sinal">
-    Defina o nome, tipo de resultado (sim/não, número, texto, lista) e a fórmula de cálculo.
+    Defina o nome, tipo de resultado (sim/não, número, texto ou lista) e a fórmula de cálculo.
   </Step>
   <Step title="Defina as condições">
-    Configure a lógica usando os campos existentes. Por exemplo: "Se deposits.total > 1000 E deposits.trend = diminuindo, então vip_decline_flag = verdadeiro".
+    Configure a lógica usando os campos existentes. Exemplo: `deposits.total` > 1000 E `deposits.trend` = decreasing → `vip_decline_flag` = verdadeiro.
   </Step>
   <Step title="Ative o sinal">
-    Após salvar, o sinal será calculado automaticamente para todos os visitantes da sua empresa.
+    Após salvar, o sinal é calculado automaticamente para todos os visitantes da sua empresa.
   </Step>
 </Steps>
 
-### Exemplo: Sinal de Declínio VIP
-
-Um sinal customizado que identifica clientes VIP que estão diminuindo gastos:
-
-| Propriedade | Valor |
-|-------------|-------|
-| **Nome** | vip_decline_flag |
-| **Tipo** | Sim/Não (boolean) |
-| **Condição** | deposits.total > 1000 E deposits.trend = diminuindo |
-| **Uso** | Disparar jornada de retenção VIP |
-
 <div className="callout-blue">
-  Sinais customizados dependem dos campos que você usar como base. Certifique-se de que os dados estão sendo preenchidos via integração antes de criar sinais que dependam deles.
-</div>
-
----
-
-## Campos por categoria de negócio
-
-A UserIn adapta os campos disponíveis ao tipo de negócio da sua empresa (definido em **Configuração da Empresa**). Alguns campos são **universais** e outros são **específicos** da sua categoria.
-
-### Campos universais
-
-Disponíveis para todas as empresas, independente da categoria:
-
-| Grupo | Exemplos |
-|-------|----------|
-| Ciclo de Vida | Estágio (anônimo, registrado, FTD, recorrente) |
-| Financeiro | Total gasto, quantidade de compras, ticket médio, tendência |
-| Comportamento | Sessões por semana, duração média, dispositivos |
-| Intenção | Score de intenção, nível de intenção |
-| Segmentos | Qualquer segmento que você criar |
-| Contato | Nome, email, telefone |
-
-### Campos específicos por categoria
-
-Dependendo da categoria selecionada, campos adicionais ficam disponíveis:
-
-| Categoria | Grupo | Exemplos |
-|-----------|-------|----------|
-| E-commerce | Carrinho | Valor do carrinho, itens, abandono |
-| E-commerce | Produtos | Produto favorito, categoria preferida |
-| E-commerce | Pedidos | Último pedido, frequência de compra |
-| Jogos | Preferências | Visitas Casino, Visitas Sports, Visitas Slots |
-| Jogos | Saldo | Saldo atual, variação na sessão |
-| Jogos | Catálogo | Nome do jogo, categoria, provedor, RTP |
-
-<div className="callout-blue">
-  Os campos específicos da sua categoria aparecem automaticamente na ontologia após a configuração da empresa.
+  Sinais customizados ficam no namespace `signals.*` do perfil. Regra fundamental: **Outputs nunca podem ser usados como base de um sinal customizado**. Use apenas Atributos, Agregados e outros Sinais.
 </div>
 
 ---
 
 ## Campos customizados
 
-Além dos campos do sistema, você pode **criar seus próprios campos** na plataforma:
+Além dos campos do sistema, você pode criar campos próprios para armazenar dados específicos do seu negócio via integração.
 
 <Steps>
   <Step title="Acesse Estrutura de automações no menu lateral">
-    Clique em **Estrutura de automações** para ver a ontologia completa da sua empresa.
+    Clique em Estrutura de automações para ver a ontologia completa da sua empresa.
   </Step>
   <Step title="Abra o Painel de Ontologia">
-    Na aba **Painel de Ontologia**, veja todos os campos disponíveis organizados por grupo. Cada campo mostra seu tipo, descrição e se pode ser usado em regras.
+    Na aba Painel de Ontologia, veja todos os campos disponíveis organizados por grupo, com tipo, descrição e se pode ser usado em regras.
   </Step>
   <Step title="Crie campos customizados">
     Clique em **Novo Campo** para adicionar campos específicos do seu negócio. Escolha o tipo de dado (texto, número, sim/não, lista) e o grupo.
@@ -490,27 +981,27 @@ Além dos campos do sistema, você pode **criar seus próprios campos** na plata
 </Steps>
 
 <div className="callout-blue">
-  Campos customizados precisam ser preenchidos via integração (API ou tracker). Eles não são calculados automaticamente como os sinais e outputs do sistema.
+  Campos customizados precisam ser preenchidos via integração (API ou tracker com evento customizado). Eles não são calculados automaticamente.
 </div>
 
 ---
 
 ## Como usar campos em condições
 
-Ao criar uma regra ou condição no Construtor de Fluxos, você escolhe:
+Ao criar uma regra ou condição no Construtor de Fluxos:
 
 <Steps>
-  <Step title="O tipo de condição">
-    Selecione **Atributo do Usuário** para usar qualquer campo do perfil.
+  <Step title="Selecione o tipo de condição">
+    Escolha **Atributo de Perfil** para usar qualquer campo da ontologia.
   </Step>
-  <Step title="O campo">
-    Escolha o campo da lista. Os campos são organizados por grupo (Financeiro, Comportamento, etc.).
+  <Step title="Escolha o campo">
+    Os campos são organizados por grupo (Financeiro, Comportamento, Apostas, etc.). Campos iGaming só aparecem para empresas na vertical `bets`.
   </Step>
-  <Step title="O operador">
-    Defina a comparação: *igual a*, *maior que*, *contém*, *existe*, etc.
+  <Step title="Defina o operador">
+    Campos numéricos: igual a, maior que, menor que, entre. Campos enum: é um de, não é. Campos array: contém, não contém.
   </Step>
-  <Step title="O valor">
-    Informe o valor para comparação. Para campos de lista (como Tier), as opções aparecerão automaticamente.
+  <Step title="Informe o valor">
+    Para campos enum e tier, as opções aparecem automaticamente. Para campos numéricos, insira o valor manualmente.
   </Step>
 </Steps>
 
@@ -518,37 +1009,41 @@ Ao criar uma regra ou condição no Construtor de Fluxos, você escolhe:
 
 ## Exemplos práticos
 
-Combinações comuns de campos, sinais e outputs em regras e jornadas:
-
 <AccordionGroup>
-  <Accordion title="Identificar clientes VIP" icon="crown">
-    **Condição:** Total Depositado *maior que* R\$ 5.000 **E** Tier *igual a* Whale
+  <Accordion title="Converter visitante registrado no momento certo" icon="bullseye">
+    **Condição:** `stage` = registered **E** `intention.score` > 65 **E** `deposits.daysSinceLastDeposit` = 0 (nunca depositou)
 
-    **Ação:** Adicionar segmento "VIP" e exibir modal de programa de fidelidade.
+    **Ação:** Exibir modal com oferta de bônus no primeiro depósito personalizada com `{{ game.name }}`.
   </Accordion>
 
-  <Accordion title="Reativar clientes inativos" icon="rotate">
-    **Condição:** Dias Desde Último Depósito *maior que* 30 **E** Total Depositado *maior que* R\$ 100
+  <Accordion title="Intervenção de jogo responsável em tempo real" icon="shield">
+    **Condição:** `balanceRealtime.alert80Triggered` = verdadeiro **OU** `betting.frustration.level` = critical
 
-    **Ação:** Enviar SMS com oferta especial de retorno.
+    **Ação:** Exibir modal obrigatório de pausa. Canal: `onsite_modal`. Timing: `immediate`.
   </Accordion>
 
-  <Accordion title="Converter visitantes de alta intenção" icon="bullseye">
-    **Condição:** Score de Intenção *maior que* 70 **E** Estágio *igual a* Anônimo
+  <Accordion title="Reativar high roller antes do churn" icon="rotate">
+    **Condição:** `deposits.tier` = high **E** `deposits.daysSinceLastDeposit` > 14 **E** `deposits.trend` = decreasing
 
-    **Ação:** Exibir Smart Modal com formulário de cadastro e oferta especial.
+    **Ação:** Acionar `betting.retention.bestAction`. Se = `cashback`, enviar oferta via `betting.nextBestAction.channel`.
   </Accordion>
 
-  <Accordion title="Prevenir churn de clientes valiosos" icon="shield">
-    **Condição:** Tier *igual a* High **E** Tendência *igual a* Diminuindo **E** Dias Desde Último Depósito *maior que* 14
+  <Accordion title="Oferta de freespin para jogador frustrado" icon="face-angry">
+    **Condição:** `betting.frustration.level` = moderate **E** `betting.playerValue.tier` = gold
 
-    **Ação:** Iniciar jornada de retenção com SMS + email + modal personalizado.
+    **Ação:** Exibir modal com oferta de freespins no `{{ favoriteGame.name }}`. Canal: `onsite_modal`.
   </Accordion>
 
-  <Accordion title="Alerta de variação de saldo" icon="triangle-exclamation">
-    **Condição:** Variação de Saldo *menor que* -50%
+  <Accordion title="Upsell para tier diamond" icon="crown">
+    **Condição:** `betting.playerValue.tier` = platinum **E** `betting.retention.urgency` = no_action **E** `deposits.trend` = increasing
 
-    **Ação:** Exibir Smart Modal com alerta personalizado e sugestão de pausa.
+    **Ação:** Exibir convite para programa Diamond com benefícios exclusivos.
+  </Accordion>
+
+  <Accordion title="Personalização de mensagem pelo horário ideal" icon="clock">
+    **Condição:** Hora atual = `bestTime.bestHour` **E** `deposits.daysSinceLastDeposit` > 7
+
+    **Ação:** Enviar SMS: "Olá, `{{ contact.firstName }}`! Você costuma jogar por volta desta hora. Temos uma oferta esperando por você."
   </Accordion>
 </AccordionGroup>
 
@@ -556,20 +1051,18 @@ Combinações comuns de campos, sinais e outputs em regras e jornadas:
 
 ## Onde a ontologia aparece na plataforma
 
-Você vai encontrar os campos da ontologia em vários lugares:
-
 <CardGroup cols={2}>
   <Card title="Regras e Condições" icon="code-branch">
-    Ao criar uma regra no Construtor de Fluxos ou na página de Regras, os campos aparecem como opções de condição. Ex: "Se *deposits.total* é maior que 500".
+    Todos os campos selecionáveis aparecem no Construtor de Fluxos e na página de Regras, organizados por grupo.
   </Card>
   <Card title="Personalização de Templates" icon="wand-magic-sparkles">
-    Use variáveis como `{{contact.firstName}}` ou `{{deposits.total}}` em Smart Modals, Smart Blocks, emails e SMS para personalizar conteúdo.
+    Campos com variável Liquid (ex: `{{ contact.firstName }}`, `{{ game.name }}`, `{{ favoriteGame.url }}`) podem ser usados em modais, smart blocks, SMS e emails.
   </Card>
-  <Card title="Segmentos" icon="users">
-    Defina regras de segmentação usando qualquer campo do perfil. Visitantes são classificados automaticamente em tempo real.
+  <Card title="Audiência" icon="users">
+    Qualquer campo pode ser critério de segmentação. Visitantes são classificados em tempo real conforme os critérios definidos.
   </Card>
-  <Card title="Analytics e Insights" icon="chart-bar">
-    Veja distribuições e tendências dos campos no dashboard de analytics.
+  <Card title="Painel de Ontologia" icon="diagram-project">
+    Em Estrutura de automações, visualize todos os campos por grupo, tipo e origem. Crie sinais e campos customizados.
   </Card>
 </CardGroup>
 
@@ -577,7 +1070,7 @@ Você vai encontrar os campos da ontologia em vários lugares:
 
 <CardGroup cols={2}>
   <Card title="Personalização com Variáveis" icon="wand-magic-sparkles" href="/plataforma/personalizacao-liquid">
-    Use os campos do perfil para personalizar mensagens em modais, emails e SMS.
+    Use os campos do perfil para personalizar mensagens em modais, emails e SMS com variáveis Liquid.
   </Card>
   <Card title="Jornadas" icon="route" href="/plataforma/jornadas">
     Crie automações visuais usando os campos e sinais como condições no Construtor de Fluxos.
